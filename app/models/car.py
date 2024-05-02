@@ -3,6 +3,8 @@ from sqlalchemy import Column, Integer, String, Float, Date, ForeignKey
 from app.database import Base
 
 
+
+
 class Sale(Base):
     __tablename__ = 'sales'
     id = Column(Integer, primary_key=True)
@@ -36,7 +38,7 @@ class Purchase(Base):
     client = relationship("Client", back_populates="purchases")
     vendor = relationship("Vendor", back_populates="purchases")
 
-# Relationships in other models
+
 class Vehicle(Base):
     __tablename__ = 'vehicles'
     id = Column(Integer, primary_key=True)
