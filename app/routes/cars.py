@@ -4,7 +4,7 @@ from fastapi import APIRouter, HTTPException, status, Form, Depends
 from fastapi.responses import RedirectResponse
 from pydantic import ValidationError
 from app.schemas import Car  # Assuming you have a Car schema
-import app.services.Cars as service  # Assuming you have a service module for cars
+import app.services.cars as service  # Assuming you have a service module for cars
 from app.login_manager import login_manager
 from app.schemas import UserSchema
 from fastapi.templating import Jinja2Templates
