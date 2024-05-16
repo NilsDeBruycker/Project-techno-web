@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestion d'Achat/Location de Véhicules</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <h1>Gestion d'Achat/Location de Véhicules</h1>
+        <div id="auth">
+            <button id="login-button">Login</button>
+            <button id="signup-button">Sign Up</button>
+        </div>
+        <div id="search-bar">
+            <input type="text" id="search" placeholder="Rechercher un véhicule...">
+            <button id="search-button">Rechercher</button>
+        </div>
+    </header>
+    <main>
+        <section id="vehicle-list">
+            <!-- Les véhicules seront affichés ici -->
+        </section>
+    </main>
+    <div id="login-modal" class="modal">
+        <div class="modal-content">
+            <span class="close" id="close-login">&times;</span>
+            <h2>Login</h2>
+            <input type="text" id="login-username" placeholder="Username">
+            <input type="password" id="login-password" placeholder="Password">
+            <button id="login-submit">Login</button>
+        </div>
+    </div>
+    <div id="signup-modal" class="modal">
+        <div class="modal-content">
+            <span class="close" id="close-signup">&times;</span>
+            <h2>Sign Up</h2>
+            <input type="text" id="signup-username" placeholder="Username">
+            <input type="password" id="signup-password" placeholder="Password">
+            <select id="signup-role" title="Choose your role">
+                <option value="client">Client</option>
+                <option value="vendeur">Vendeur</option>
+            </select>
+            <button id="signup-submit">Sign Up</button>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>

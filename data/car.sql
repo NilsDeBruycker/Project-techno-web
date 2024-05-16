@@ -1,4 +1,4 @@
-
+"""
 CREATE TABLE Utilisateurs (
     Id_Utilisateur INTEGER PRIMARY KEY AUTOINCREMENT,
     Nom TEXT NOT NULL,
@@ -65,3 +65,4 @@ CREATE TABLE Achat (
     FOREIGN KEY(Id_Client) REFERENCES Clients(Id_Client),
     FOREIGN KEY(Id_Vehicule) REFERENCES Vehicule(Id_Vehicule)
 );
+"""
