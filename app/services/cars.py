@@ -1,13 +1,23 @@
 from uuid import uuid4
-from sqlalchemy import select
-from sqlalchemy.orm import joinedload
+from sqlalchemy import select, ForeignKey
+from sqlalchemy.orm import relationship
 
 from app.schemas import cars
 from app.database import Session
 from app.models.car import Car
+from app.models import Rental
 from app.schemas.cars import Car as CarSchema
+from app.schemas import Rental as RentalSchema
 
 
+def save_rental(new_rental: RentalSchema):
+    with Session() as session:
+        rental_entity = Rental(
+            user_email=new_rental.user_email,
+            car_id=new_rental.car_id
+        )
+        session.add(rental_entity)
+        session.commit()
 def save_car(new_car: CarSchema):
     with Session() as session:
         new_car_entity = Car(
@@ -122,3 +132,45 @@ def modify_car_by_id(car_id: str, modified_car) -> Car | None:
             session.commit()
             return car
         return None
+
+
+
+def rent_car(user_email: str, car_id: str):
+    with Session() as session:
+        car = session.query(Car).filter(Car.id == car_id, Car.status == "available").one_or_none()
+        if car:
+            rental = Rental(user_email=user_email, car_id=car_id)
+            session.add(rental)
+            car.status = "rented"
+            session.commit()
+            return True
+        return False
+
+def return_car(user_email: str, car_id: str):
+    with Session() as session:
+        rental = session.query(Rental).filter(Rental.user_email == user_email, Rental.car_id == car_id).one_or_none()
+        if rental:
+            car = session.query(Car).filter(Car.id == car_id).one()
+            car.status = "available"
+            session.delete(rental)
+            session.commit()
+            return True
+        return False
+
+def get_rented_cars(user_email: str):
+    with Session() as session:
+        statement = select(Car).join(Rental).filter(Rental.user_email == user_email)
+        cars_data = session.scalars(statement).unique().all()
+    return [
+        Car(
+            id=car.id,
+            brand=car.brand,
+            model=car.model,
+            price=car.price,
+            owner=car.owner,
+            status=car.status,
+            year=car.year,
+            color=car.color,
+        )
+        for car in cars_data
+    ]

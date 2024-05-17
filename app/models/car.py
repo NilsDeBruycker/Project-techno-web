@@ -2,6 +2,7 @@ from sqlalchemy.orm import relationship
 from sqlalchemy import Column, Integer, String, Float, Date, ForeignKey, Table
 from app.database import Base
 
+
 # Define association table for many-to-many relationship between Vehicule and Utilisateur
 association_table = Table(
     'association', Base.metadata,
@@ -79,3 +80,12 @@ class Vendeur(Base):
     sales = relationship("Sale", back_populates="vendor")
     purchases = relationship("Purchase", back_populates="vendor")
     utilisateur = relationship("Utilisateur", back_populates="vendeurs")
+
+class Rental(Base):
+    __tablename__ = "rentals"
+
+    user_email = Column(String, ForeignKey("users.email"), primary_key=True)
+    car_id = Column(String, ForeignKey("cars.id"), primary_key=True)
+
+    user = relationship("User", back_populates="rentals")
+    car = relationship("Car", back_populates="rentals")

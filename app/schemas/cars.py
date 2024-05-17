@@ -16,3 +16,8 @@ class Vehicle(VehicleBase):
 
     class Config:
         orm_mode = True
+
+
+class Rental(BaseModel):
+    user_email: str
+    car_id: str
