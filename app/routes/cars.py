@@ -242,3 +242,32 @@ def change_car_owner(id: Annotated[str, Form()], new_owner: Annotated[str, Form(
     }
     service.modify_car_by_id(car.id, modified_car)
     return RedirectResponse(url="/cars/", status_code=302)
+
+# Rent a car endpoint
+@router.post('/rent')
+def rent_car(id: Annotated[str, Form()], user: UserSchema = Depends(login_manager)):
+    car = service.get_car_by_id(id)
+    if car is None:
+        return HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Car not found"
+        )
+    if car.status != "privé":
+        return HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="This car is not available for rent."
+        )
+    else:
+        modified_car = {
+            "make": car.make,
+            "model": car.model,
+            "id": car.id,
+            "year": car.year,
+            "owner": car.owner_email,
+            "status": "en location",  # Change status to "en location" (on rent)
+        }
+        service.modify_car_by_id(car.id, modified_car)
+        return RedirectResponse(url="/cars/", status_code=302)
+
+
+
