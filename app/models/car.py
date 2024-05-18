@@ -2,12 +2,11 @@ from sqlalchemy.orm import relationship
 from sqlalchemy import Column, Integer, String, Float, Date, ForeignKey, Table
 from app.database import Base
 
-
 # Define association table for many-to-many relationship between Vehicule and Utilisateur
 association_table = Table(
     'association', Base.metadata,
-    Column('vehicule_id', Integer, ForeignKey('vehicule.id')),
-    Column('utilisateur_id', Integer, ForeignKey('utilisateur.id'))
+    Column('vehicule_id', Integer, ForeignKey('vehicles.id')),
+    Column('utilisateur_id', Integer, ForeignKey('utilisateurs.id'))
 )
 
 class Sale(Base):
@@ -41,7 +40,7 @@ class Purchase(Base):
     purchase_price = Column(Float)
     vehicle = relationship("Vehicle", back_populates="purchases")
     client = relationship("Client", back_populates="purchases")
-    vendeur = relationship("Vendor", back_populates="purchases")
+    vendor = relationship("Vendor", back_populates="purchases")
 
 class Vehicle(Base):
     __tablename__ = 'vehicles'
@@ -55,7 +54,7 @@ class Vehicle(Base):
     sales = relationship("Sale", back_populates="vehicle")
     rentals = relationship("Rental", back_populates="vehicle")
     purchases = relationship("Purchase", back_populates="vehicle")
-    utilisateurs = relationship("Utilisateur", secondary=association_table, back_populates="vehicules")
+    utilisateurs = relationship("Utilisateur", secondary=association_table, back_populates="vehicles")
 
 class Utilisateur(Base):
     __tablename__ = 'utilisateurs'
@@ -64,8 +63,8 @@ class Utilisateur(Base):
     prenom = Column(String)
     adresse = Column(String)
     num_tel = Column(String)
-    vehicules = relationship("Vehicle", secondary=association_table, back_populates="utilisateurs")
-    vendeurs = relationship("Vendor", back_populates="utilisateur")
+    vehicles = relationship("Vehicle", secondary=association_table, back_populates="utilisateurs")
+    vendors = relationship("Vendor", back_populates="utilisateur")
     clients = relationship("Client", back_populates="utilisateur")
 
 class Client(Base):
@@ -73,19 +72,11 @@ class Client(Base):
     id = Column(Integer, ForeignKey('utilisateurs.id'), primary_key=True)
     rentals = relationship("Rental", back_populates="client")
     purchases = relationship("Purchase", back_populates="client")
-    Utilisateur =relationship("Utilisateur",back_populates="clients ")
+    utilisateur = relationship("Utilisateur", back_populates="clients")
+
 class Vendeur(Base):
     __tablename__ = 'vendors'
     id = Column(Integer, ForeignKey('utilisateurs.id'), primary_key=True)
     sales = relationship("Sale", back_populates="vendor")
     purchases = relationship("Purchase", back_populates="vendor")
-    utilisateur = relationship("Utilisateur", back_populates="vendeurs")
-
-class Rental(Base):
-    __tablename__ = "rentals"
-
-    user_email = Column(String, ForeignKey("users.email"), primary_key=True)
-    car_id = Column(String, ForeignKey("cars.id"), primary_key=True)
-
-    user = relationship("User", back_populates="rentals")
-    car = relationship("Car", back_populates="rentals")
+    utilisateur = relationship("Utilisateur", back_populates="vendors")
