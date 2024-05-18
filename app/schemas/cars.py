@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 
-class VehicleBase(BaseModel):
+class Car(BaseModel):
     model: str
     brand: str
     color: str
@@ -8,10 +8,10 @@ class VehicleBase(BaseModel):
     mileage: int
     average_consumption: float
 
-class VehicleCreate(VehicleBase):
+class VehicleCreate(Car):
     pass
 
-class Vehicle(VehicleBase):
+class Vehicle(Car):
     id: int
 
     class Config:
