@@ -9,7 +9,7 @@ from app.models import Rental
 from app.schemas.cars import Car as CarSchema
 from app.schemas import Rental as RentalSchema
 
-
+# Function to save a new rental
 def save_rental(new_rental: RentalSchema):
     with Session() as session:
         rental_entity = Rental(
@@ -18,6 +18,8 @@ def save_rental(new_rental: RentalSchema):
         )
         session.add(rental_entity)
         session.commit()
+
+# Function to save a new car
 def save_car(new_car: CarSchema):
     with Session() as session:
         new_car_entity = Car(
@@ -33,6 +35,7 @@ def save_car(new_car: CarSchema):
         session.add(new_car_entity)
         session.commit()
 
+# Function to get all public cars
 def get_public_cars():
     with Session() as session:
         statement = select(Car).filter(Car.status == "available")
@@ -51,6 +54,7 @@ def get_public_cars():
         for car in cars_data
     ]
 
+# Function to get all cars owned by a user
 def get_own_cars(user):
     with Session() as session:
         statement = select(Car).filter(Car.owner == user.email)
@@ -69,6 +73,7 @@ def get_own_cars(user):
         for car in cars_data
     ]
 
+# Function to get all cars
 def get_all_cars() -> list[Car]:
     with Session() as session:
         statement = select(Car)
@@ -87,23 +92,26 @@ def get_all_cars() -> list[Car]:
         for car in cars_data
     ]
 
-def delete_car_by_id(car_id:str):
+# Function to delete a car by its ID
+def delete_car_by_id(car_id: str):
     with Session() as session:
-        statement=select(Car).filter(Car.id == car_id)
-        car=session.scalars(statement).one()
+        statement = select(Car).filter(Car.id == car_id)
+        car = session.scalars(statement).one()
         session.delete(car)
         session.commit()
 
-def is_car_exist(car_id:str):
+# Function to check if a car exists by its ID
+def is_car_exist(car_id: str):
     with Session() as session:
-        statement=select(Car).filter(Car.id == car_id)
-        car=session.scalar(statement)
+        statement = select(Car).filter(Car.id == car_id)
+        car = session.scalar(statement)
         return car is not None
 
+# Function to get a car by its ID
 def get_car_by_id(car_id):
     with Session() as session:
-        statement=select(Car).filter(Car.id == car_id)
-        car=session.scalars(statement).one_or_none()
+        statement = select(Car).filter(Car.id == car_id)
+        car = session.scalars(statement).one_or_none()
         if car:
             return Car(
                 id=car.id,
@@ -117,10 +125,11 @@ def get_car_by_id(car_id):
             )
         return None
 
+# Function to modify a car by its ID
 def modify_car_by_id(car_id: str, modified_car) -> Car | None:
     with Session() as session:
-        statement=select(Car).filter(Car.id == car_id)
-        car=session.scalars(statement).one_or_none()
+        statement = select(Car).filter(Car.id == car_id)
+        car = session.scalars(statement).one_or_none()
         if car:
             car.owner = modified_car.get("owner", car.owner)
             car.brand = modified_car.get("brand", car.brand)
@@ -133,8 +142,7 @@ def modify_car_by_id(car_id: str, modified_car) -> Car | None:
             return car
         return None
 
-
-
+# Function to rent a car
 def rent_car(user_email: str, car_id: str):
     with Session() as session:
         car = session.query(Car).filter(Car.id == car_id, Car.status == "available").one_or_none()
@@ -146,6 +154,7 @@ def rent_car(user_email: str, car_id: str):
             return True
         return False
 
+# Function to return a rented car
 def return_car(user_email: str, car_id: str):
     with Session() as session:
         rental = session.query(Rental).filter(Rental.user_email == user_email, Rental.car_id == car_id).one_or_none()
@@ -157,6 +166,7 @@ def return_car(user_email: str, car_id: str):
             return True
         return False
 
+# Function to get all cars rented by a user
 def get_rented_cars(user_email: str):
     with Session() as session:
         statement = select(Car).join(Rental).filter(Rental.user_email == user_email)
