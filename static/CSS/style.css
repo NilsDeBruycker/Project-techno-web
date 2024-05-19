@@ -59,6 +59,7 @@ header {
 
 .vehicle img {
     max-width: 100%;
+    height: auto;
     border-bottom: 1px solid #ccc;
     margin-bottom: 10px;
 }
