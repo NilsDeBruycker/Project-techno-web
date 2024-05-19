@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet"> 
+        <title>AutoPro</title>
+        <link rel="stylesheet" href="style.css">
+    </head>
+    <body>
+        <section>
+            <div class="cercle"></div>
+            <header>
+                <a href="#">
+                    <img src="Media/logo.png" class="logo">
+                </a>
+            </header>
+            <div class="container">
+                <div class="texte">
+                    <h2>Spécialiste véhicules <span>Sportifs & Luxueux</span></h2>
+                    <p>Achat, vente et conseil de tout véhicule luxueux, sportif grâce
+                        à une équipe de professionnels. Faire confiance à AUTOPRO, c'est 
+                        l'assurance d'un suivi et service de qualité haut de gamme</p>
+                    <a href="mailto:contact@autopro.com">Nous contacter</a>
+                </div>
+                <div class="imgBox">
+                    <img src="Media/ferari.png" class="ferari">
+                </div>
+            </div>
+            <ul class="catalogue">
+                <li><img src="Media/ferari.png" onclick="imgSlider('Media/ferari.png');changeCouleurCercle('#f43839')"></li>
+                <li><img src="Media/Lambo.png"onclick="imgSlider('Media/Lambo.png');changeCouleurCercle('#2dc250')"></li>
+                <li><img src="Media/amg.png"onclick="imgSlider('Media/amg.png');changeCouleurCercle('#939090')"></li>
+                <li><img src="Media/bentley.png"onclick="imgSlider('Media/bentley.png');changeCouleurCercle('#9dbfcc')"></li>
+            </ul>
+            <ul class="reseau">
+                <li><a href="https://www.facebook.com/"><img src="Media/fb.png"></a></li>
+                <li><a href="https://www.instagram.com/?hl=fr"><img src="Media/insta.png"></a></li>
+                <li><a href="https://www.youtube.com/"><img src="Media/youtube.png"></a></li>
+            </ul>
+        </section>
+        <script type="text/javascript">
+            function imgSlider(anything){
+                document.querySelector('.ferari').src = anything;
+            }
+            function changeCouleurCercle(color){
+                const cercle = document.querySelector('.cercle');
+                cercle.style.background = color;
+            }
+
+        </script>
+    </body>
+</html>

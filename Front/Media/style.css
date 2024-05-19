@@ -1,0 +1,125 @@
+*
+{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+section{
+    position: relative;
+    width: 100%;
+    min-height: 100vh;
+    padding: 100px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #000;
+}
+header{
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    padding: 20px 100px;
+}
+header .logo{
+    position: relative;
+    max-width: 120px;
+    cursor: pointer;
+}
+.container{
+    position: relative;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.container .texte{
+    position: relative;
+    max-width: 600px;
+}
+.container .texte h2{
+    color: #fff;
+    font-size: 55px;
+    line-height: 65px;
+    font-weight: 500;
+}
+.container .texte h2 span{
+    color: #f43839;
+    font-size: 60px;
+    font-weight: 900;
+}
+.container .texte p{
+    color: #fff;
+}
+.container .texte a{
+    display: inline-block;
+    margin-top: 20px;
+    padding: 8px 20px;
+    color: snow;
+    background: #f43839;
+    border-radius: 40px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-decoration: none;
+}
+.container .imgBox{
+    width: 600px;
+    display: flex;
+    justify-content: flex-end;
+    padding: 1px;
+    margin-top: 50px;
+}
+.container .imgBox img{
+    max-width: 750px;
+}
+.catalogue{
+    position: absolute;
+    left: 50%;
+    bottom: 20px;
+    transform: translateX(-50%);
+    display: flex;
+}
+.catalogue li{
+    list-style: none;
+    display: inline-block;
+    margin: 0 20px;
+    cursor: pointer;
+    transform: 0.5s;
+}
+.catalogue li:hover{
+    transform: translateY(-20px);
+}
+.catalogue li img{
+    max-width: 130px;
+}
+.reseau{
+    position: absolute;
+    top: 50%;
+    right: 30px;
+    transform: translateY(-50%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+.reseau li{
+    list-style: none;
+}
+.reseau li a{
+    display: inline-block;
+    margin: 5px 0;
+    transform: scale(0.6);
+}
+.reseau li img{
+    max-width: 50px;
+}
+.cercle{
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #f43839;
+    clip-path: circle(600px at right 500px);
+}
