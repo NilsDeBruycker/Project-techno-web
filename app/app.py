@@ -1,23 +1,24 @@
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 
-from app.routes.cars import router as task_router
+from app.routes.cars import router as vehicle_router  
 from app.routes.users import router as user_router
 from app.database import create_database
 
-app = FastAPI(title="My library")
-app.include_router(task_router)
-app.include_router(user_router)
-app.mount('/static', StaticFiles(directory='static'))
+app = FastAPI(title="Car Dealer")  # Completed title
 
-@app.on_event('startup')
-def on_startup():
-    print("Server started.")
+# Include routers
+app.include_router(vehicle_router)
+app.include_router(user_router)
+
+# Mount static files
+app.mount('/static', StaticFiles(directory='static'), name='static')
 
 @app.on_event("startup")
-def on_application_started():
+def on_startup():
     create_database()
+    print("Server started and database initialized.")
 
-
+@app.on_event("shutdown")
 def on_shutdown():
-    print("Bye bye!")
+    print("Server shutting down.")
