@@ -3,7 +3,7 @@ from typing import Annotated
 from fastapi import APIRouter, HTTPException, status, Form, Depends
 from fastapi.responses import RedirectResponse
 from pydantic import ValidationError
-from app.schemas import cars, user # Assuming you have a Car and UserSchema schema
+from app.schemas import Car, UserSchema  # Assuming you have a Car and UserSchema schema
 import app.services.cars as service  # Assuming you have a service module for cars
 from app.login_manager import login_manager
 from fastapi.templating import Jinja2Templates
@@ -14,7 +14,7 @@ router = APIRouter(prefix="/cars", tags=["Cars"])
 templates = Jinja2Templates(directory="templates")
 
 @router.get('/')
-def get_all_cars(request: Request, user: user = Depends(login_manager.optional)):
+def get_all_cars(request: Request, user: UserSchema = Depends(login_manager.optional)):
     if user is not None:
         if user.role == "admin":
             cars = service.get_all_cars()
@@ -30,7 +30,7 @@ def get_all_cars(request: Request, user: user = Depends(login_manager.optional))
     )
 
 @router.get('/new')
-def get_car(request: Request, user: user = Depends(login_manager)):
+def get_car(request: Request, user: UserSchema = Depends(login_manager)):
     if user is None:
         return templates.TemplateResponse(
             "login.html",
@@ -67,7 +67,7 @@ def create_new_car(make: Annotated[str, Form()], model: Annotated[str, Form()], 
         "owner": owner,
     }
     try:
-        new_car_test = cars(**new_car_data)
+        new_car_test = Car(**new_car_data)
     except ValidationError:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -97,7 +97,7 @@ def modify_car(id: Annotated[str, Form()], make: Annotated[str, Form()], model: 
         "owner": owner,
     }
     try:
-        new_car_test = cars(**new_car_data)
+        new_car_test = Car(**new_car_data)
     except ValidationError:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -114,10 +114,10 @@ def delete_car(id: Annotated[str, Form()]):
             detail="Car ID not found"
         )
     service.delete_car_by_id(id)
-    return RedirectResponse(url="/cars/", status_code=302)  
+    return RedirectResponse(url="/cars/", status_code=302)
 
 @router.post('/sell')
-def sell_car(id: Annotated[str, Form()], user: user = Depends(login_manager)):
+def sell_car(id: Annotated[str, Form()], user: UserSchema = Depends(login_manager)):
     car = service.get_car_by_id(id)
     if car is None:
         raise HTTPException(
@@ -139,7 +139,7 @@ def sell_car(id: Annotated[str, Form()], user: user = Depends(login_manager)):
     return RedirectResponse(url="/users/profile", status_code=302)
 
 @router.post('/unsell')
-def retire_car_from_sale(id: Annotated[str, Form()], user: user = Depends(login_manager)):
+def retire_car_from_sale(id: Annotated[str, Form()], user: UserSchema = Depends(login_manager)):
     car = service.get_car_by_id(id)
     if car is None:
         raise HTTPException(
@@ -161,7 +161,7 @@ def retire_car_from_sale(id: Annotated[str, Form()], user: user = Depends(login_
     return RedirectResponse(url="/users/profile", status_code=302)
 
 @router.post('/buy')
-def buy_car(id: Annotated[str, Form()], user: user= Depends(login_manager)):
+def buy_car(id: Annotated[str, Form()], user: UserSchema = Depends(login_manager)):
     car = service.get_car_by_id(id)
     if car is None:
         raise HTTPException(
@@ -178,7 +178,7 @@ def buy_car(id: Annotated[str, Form()], user: user= Depends(login_manager)):
     return RedirectResponse(url="/cars/", status_code=302)
 
 @router.post("/change_owner")
-def change_car_owner(id: Annotated[str, Form()], new_owner: Annotated[str, Form()], user: user = Depends(login_manager)):
+def change_car_owner(id: Annotated[str, Form()], new_owner: Annotated[str, Form()], user: UserSchema = Depends(login_manager)):
     car = service.get_car_by_id(id)
     if car is None:
         raise HTTPException(
@@ -200,7 +200,7 @@ def change_car_owner(id: Annotated[str, Form()], new_owner: Annotated[str, Form(
     return RedirectResponse(url="/cars/", status_code=302)
 
 @router.post('/rent')
-def rent_car(id: Annotated[str, Form()], user: user= Depends(login_manager)):
+def rent_car(id: Annotated[str, Form()], user: UserSchema = Depends(login_manager)):
     car = service.get_car_by_id(id)
     if car is None:
         raise HTTPException(

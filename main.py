@@ -2,7 +2,6 @@ from fastapi import FastAPI
 from app.routes import cars  # Import your routers or API endpoints
 from app.database import database  # Import your database setup if any
 from app.schemas import Car
-from app.models import car 
 import uvicorn
 
 app = FastAPI()
