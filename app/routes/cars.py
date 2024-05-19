@@ -3,7 +3,7 @@ from typing import Annotated
 from fastapi import APIRouter, HTTPException, status, Form, Depends
 from fastapi.responses import RedirectResponse
 from pydantic import ValidationError
-from app.schemas import Car, UserSchema  # Assuming you have a Car and UserSchema schema
+from app.schemas import cars, UserSchema # Assuming you have a Car and UserSchema schema
 import app.services.cars as service  # Assuming you have a service module for cars
 from app.login_manager import login_manager
 from fastapi.templating import Jinja2Templates
@@ -67,7 +67,7 @@ def create_new_car(make: Annotated[str, Form()], model: Annotated[str, Form()], 
         "owner": owner,
     }
     try:
-        new_car_test = Car(**new_car_data)
+        new_car_test = cars(**new_car_data)
     except ValidationError:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -97,7 +97,7 @@ def modify_car(id: Annotated[str, Form()], make: Annotated[str, Form()], model: 
         "owner": owner,
     }
     try:
-        new_car_test = Car(**new_car_data)
+        new_car_test = cars(**new_car_data)
     except ValidationError:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
