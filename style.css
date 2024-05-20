@@ -136,3 +136,72 @@ body {
 .reseau img:hover {
     transform: scale(1.1);
 }
+
+#auth-section {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: #f7f7f7;
+    color: #000;
+    padding-top: 80px; /* To avoid overlap with the fixed header */
+}
+
+.auth-container {
+    display: flex;
+    justify-content: space-between;
+    width: 600px;
+    background: #fff;
+    padding: 40px;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+}
+
+.auth-form {
+    display: none;
+    flex-direction: column;
+    gap: 15px;
+    width: 100%;
+}
+
+.auth-form h2 {
+    margin: 0 0 20px 0;
+    color: #f43839;
+}
+
+.auth-form input,
+.auth-form select,
+.auth-form button {
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    width: 100%;
+}
+
+.auth-form button {
+    background: #f43839;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.auth-form button:hover {
+    background: #c32e29;
+}
+
+.auth-form p {
+    margin: 0;
+    font-size: 14px;
+}
+
+.auth-form a {
+    color: #f43839;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.auth-form a:hover {
+    color: #c32e29;
+}

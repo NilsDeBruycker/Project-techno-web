@@ -51,14 +51,64 @@
             <li><a href="https://www.youtube.com/"><img src="Media/youtube.png" alt="YouTube"></a></li>
         </ul>
     </section>
+
+    <section id="auth-section">
+        <div class="auth-container">
+            <div id="register-form" class="auth-form">
+                <h2>Register Now</h2>
+                <input type="text" placeholder="Enter your name">
+                <input type="email" placeholder="Enter your email">
+                <input type="password" placeholder="Enter your password">
+                <input type="password" placeholder="Confirm your password">
+                <select>
+                    <option value="user">User</option>
+                    <option value="admin">Admin</option>
+                </select>
+                <button onclick="register()">Register Now</button>
+                <p>Already have an account? <a href="#" onclick="showLoginForm()">Login now</a></p>
+            </div>
+            <div id="login-form" class="auth-form">
+                <h2>Login Now</h2>
+                <input type="email" placeholder="Enter your email">
+                <input type="password" placeholder="Enter your password">
+                <button onclick="login()">Login Now</button>
+                <p>Don't have an account? <a href="#" onclick="showRegisterForm()">Register now</a></p>
+            </div>
+        </div>
+    </section>
+
     <script type="text/javascript">
         function imgSlider(anything){
             document.querySelector('.ferari').src = anything;
         }
+
         function changeCouleurCercle(color){
             const cercle = document.querySelector('.cercle');
             cercle.style.background = color;
         }
+
+        function showLoginForm() {
+            document.getElementById('login-form').style.display = 'block';
+            document.getElementById('register-form').style.display = 'none';
+        }
+
+        function showRegisterForm() {
+            document.getElementById('login-form').style.display = 'none';
+            document.getElementById('register-form').style.display = 'block';
+        }
+
+        function register() {
+            // Add your registration logic here
+            alert("Registered successfully!");
+        }
+
+        function login() {
+            // Add your login logic here
+            alert("Logged in successfully!");
+        }
+
+        // Initial display setup
+        showLoginForm(); // or showRegisterForm() based on what you want to show initially
     </script>
 </body>
 </html>
