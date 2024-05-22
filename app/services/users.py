@@ -1,12 +1,12 @@
 from sqlalchemy import select
 from app.schemas import UserSchema
 from app.database import Session
-from app.models.car import User
+from app.models.car import Utilisateur
 
 
 def get_user_by_username(username: str):
     with Session() as session:
-        statement = select(User).filter(User.username == username)
+        statement = select(Utilisateur).filter(Utilisateur.username == username)
         user = session.scalars(statement).one_or_none()
         if user is not None:
             return UserSchema(
@@ -21,7 +21,7 @@ def get_user_by_username(username: str):
 
 def get_user_by_email(email: str):
     with Session() as session:
-        statement = select(User).filter(User.email == email)
+        statement = select(Utilisateur).filter(Utilisateur.email == email)
         user = session.scalar(statement)
         if user is not None:
             return UserSchema(
@@ -36,7 +36,7 @@ def get_user_by_email(email: str):
 
 def sign_up_user(new_user: UserSchema):
     with Session() as session:
-        new_user_instance = User(
+        new_user_instance = Utilisateur(
             email=new_user.email,
             username=new_user.username,
             password=new_user.password,
@@ -50,10 +50,10 @@ def sign_up_user(new_user: UserSchema):
 
 def get_all_users():
     with Session() as session:
-        statement = select(User)
+        statement = select(Utilisateur)
         users_data = session.scalars(statement).unique().all()
         return [
-            User(
+            Utilisateur(
                 email=user.email,
                 password=user.password,
                 username=user.username,
@@ -66,7 +66,7 @@ def get_all_users():
 
 def block_user(email: str):
     with Session() as session:
-        user = session.query(User).filter(User.email == email).first()
+        user = session.query(Utilisateur).filter(Utilisateur.email == email).first()
         if user is not None:
             user.blocked = True
             session.commit()
@@ -74,24 +74,24 @@ def block_user(email: str):
 
 def unblock_user(email: str):
     with Session() as session:
-        user = session.query(User).filter(User.email == email).first()
+        user = session.query(Utilisateur).filter(Utilisateur.email == email).first()
         if user is not None:
             user.blocked = False
             session.commit()
 
 
-def promote_user(email: str) -> User:
+def promote_user(email: str) -> Utilisateur:
     with Session() as session:
-        user = session.query(User).filter(User.email == email).first()
+        user = session.query(Utilisateur).filter(Utilisateur.email == email).first()
         if user is not None:
             user.role = "admin"
             session.commit()
     return user
 
 
-def demote_user(email: str) -> User:
+def demote_user(email: str) -> Utilisateur:
     with Session() as session:
-        user = session.query(User).filter(User.email == email).first()
+        user = session.query(Utilisateur).filter(Utilisateur.email == email).first()
         if user:
             user.role = "normal"
             session.commit()
@@ -100,15 +100,15 @@ def demote_user(email: str) -> User:
 
 def delete_user_by_email(email: str):
     with Session() as session:
-        statement = select(User).filter(User.email == email)
+        statement = select(Utilisateur).filter(Utilisateur.email == email)
         user = session.execute(statement).scalar_one()
         session.delete(user)
         session.commit()
 
 
-def modify_user(new_username: str, current_user: User):
+def modify_user(new_username: str, current_user: Utilisateur):
     with Session() as session:
-        statement = select(User).filter(User.email == current_user.email)
+        statement = select(Utilisateur).filter(Utilisateur.email == current_user.email)
         user = session.scalars(statement).one()
         user.username = new_username
         session.commit()
@@ -116,7 +116,7 @@ def modify_user(new_username: str, current_user: User):
 
 def change_password(email: str, new_password: str):
     with Session() as session:
-        statement = select(User).filter(User.email == email)
+        statement = select(Utilisateur).filter(Utilisateur.email == email)
         user = session.scalars(statement).one()
         user.password = new_password
         session.commit()
