@@ -7,6 +7,7 @@ class Car(BaseModel):
     max_speed: int
     mileage: int
     average_consumption: float
+    price: float
 
 class VehicleCreate(Car):
     pass

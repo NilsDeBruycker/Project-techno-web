@@ -22,3 +22,5 @@ def on_startup():
 @app.on_event("shutdown")
 def on_shutdown():
     print("Server shutting down.")
+
+

@@ -2,12 +2,11 @@ from uuid import uuid4
 from sqlalchemy import select, ForeignKey
 from sqlalchemy.orm import relationship
 
-from app.schemas import cars
 from app.database import Session
-from app.models.car import cars
-from app.models import  Rental
+from app.models.car import Vehicle
+from app.models.car import  Rental
 from app.schemas.cars import Car as CarSchema
-from app.schemas import Rental as RentalSchema
+from app.schemas.cars import Rental as RentalSchema
 
 # Function to save a new rental
 def save_rental(new_rental: RentalSchema):
@@ -22,7 +21,7 @@ def save_rental(new_rental: RentalSchema):
 # Function to save a new car
 def save_car(new_car: CarSchema):
     with Session() as session:
-        new_car_entity = cars(
+        new_car_entity = Vehicle(
             id=uuid4().hex,
             brand=new_car.brand,
             model=new_car.model,
@@ -184,3 +183,56 @@ def get_rented_cars(user_email: str):
         )
         for car in cars_data
     ]
+def search(search_therm: str):
+    with Session() as session:
+        statement=select(Vehicle)
+        cars = session.scalars(statement).all()
+        selected_cars=[]
+        for car in cars:
+            if (search_therm!=''):
+                if((car.make==search_therm or
+                    search_therm==car.model or
+                    search_therm==car.color)
+                    and not( car.rentals and car.sales)):
+
+                    
+                
+                    selected_cars.append(Vehicle(
+                        id=car.id,
+                        make=car.make,
+                        model=car.model,
+                        #price=car.price,
+                        owner_email=car.owner_email,
+                        max_speed=car.max_speed,
+                        mileage=car.mileage,
+                        average_consumption=car.average_consumption,
+                        color=car.color,
+                        sales=False,
+                        rentals=False
+                        ))
+            else:
+                if(not( car.rentals and car.sales)):                                            
+                    selected_cars.append(Vehicle(
+                        id=car.id,
+                        make=car.make,
+                        model=car.model,
+                        #price=car.price,
+                        owner_email=car.owner_email,
+                        max_speed=car.max_speed,
+                        mileage=car.mileage,
+                        average_consumption=car.average_consumption,
+                        color=car.color,
+                        sales=False,
+                        rentals=False
+                        ))
+        return selected_cars
+    
+"""def tri_par_para(cars: list[Vehicle],price_max: int=1000000000,mileage :int=1000000000, vitesse_max : int=1000000000):
+    new_list=[]
+    for car in cars:
+        if(car.)""" #vais faire en js directement dans la page
+
+                
+        
+            
+            

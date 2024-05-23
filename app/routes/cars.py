@@ -215,3 +215,9 @@ def rent_car(id: Annotated[str, Form()], user: UserSchema = Depends(login_manage
     modified_car = car.copy(update={"status": "en location"})
     service.modify_car_by_id(car.id, modified_car)
     return RedirectResponse(url="/cars/", status_code=302)
+
+
+@router.post('/search')
+def search(search_therm: Annotated[str,Form()]):
+    service.search(search_therm)
+    
