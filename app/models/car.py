@@ -53,12 +53,13 @@ class Vehicle(Base):
     mileage :Mapped[Float] = mapped_column(Float)
     average_consumption :Mapped[Float] = mapped_column(Float)
     sales  :Mapped[Boolean] = mapped_column(Boolean)# = relationship("Sale", back_populates="vehicle")
+    price_sell :Mapped[Float] = mapped_column(Float)
+    price_rent :Mapped[Float] = mapped_column(Float)
     #ligne de rel avec rent
     rentals :Mapped[Boolean] = mapped_column(Boolean)
     #purchases = relationship("Purchase", back_populates="vehicle")
     #utilisateurs = relationship("Utilisateur", secondary=association_table, back_populates="vehicles")
     owner_email: Mapped[int] = mapped_column(ForeignKey("Utilisateur.adresse"),nullable=True)
-    owner: Mapped["Utilisateur"] = relationship()
 
 class Utilisateur(Base):
     __tablename__ = 'utilisateurs'
