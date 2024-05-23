@@ -71,15 +71,19 @@ class Vendor(Base):
 
 class Vehicle(Base):
     __tablename__ = 'vehicles'
-    id = Column(Integer, primary_key=True)
-    model = Column(String)
-    make = Column(String)
-    color = Column(String)
-    max_speed = Column(Float)
-    mileage = Column(Float)
-    average_consumption = Column(Float)
-    sales = Column(Boolean)
-    price_sell = Column(Float)
-    price_rent = Column(Float)
-    rentals = Column(Boolean)
-    owner_email = Column(Integer, ForeignKey("utilisateurs.id"), nullable=True)
+    id :Mapped[String] = mapped_column(Integer, primary_key=True)
+    model :Mapped[String] = mapped_column(String)
+    make :Mapped[String] = mapped_column(String)
+    color :Mapped[String] = mapped_column(String)
+    max_speed :Mapped[Float] = mapped_column(Float)
+    mileage :Mapped[Float] = mapped_column(Float)
+    average_consumption :Mapped[Float] = mapped_column(Float)
+    sales  :Mapped[Boolean] = mapped_column(Boolean)# = relationship("Sale", back_populates="vehicle")
+    price_sell :Mapped[Float] = mapped_column(Float)
+    price_rent :Mapped[Float] = mapped_column(Float)
+    #ligne de rel avec rent
+    rentals :Mapped[Boolean] = mapped_column(Boolean)
+    #purchases = relationship("Purchase", back_populates="vehicle")
+    #utilisateurs = relationship("Utilisateur", secondary=association_table, back_populates="vehicles")
+    owner_email: Mapped[int] = mapped_column(ForeignKey("Utilisateur.adresse"),nullable=True)
+
