@@ -11,63 +11,63 @@ association_table = Table(
 
 class Sale(Base):
     __tablename__ = 'sales'
-    id = Column(Integer, primary_key=True)
-    vehicle_id = Column(Integer, ForeignKey('vehicles.id'))
-    vendor_id = Column(Integer, ForeignKey('vendors.id'))
-    date_of_sale = Column(Date)
-    sale_price = Column(Float)
-    vehicle = relationship("Vehicle", back_populates="sales")
-    vendor = relationship("Vendor", back_populates="sales")
+    id : Mapped[int] = mapped_column(Integer, primary_key=True)
+    vehicle_id : Mapped[int] = mapped_column(Integer, ForeignKey('vehicles.id'))
+    vendor_id : Mapped[int] = mapped_column(Integer, ForeignKey('vendors.id'))
+    date_of_sale : Mapped[Date] = mapped_column(Date)
+    sale_price : Mapped[Float] = mapped_column(Float)
+    vehicle : Mapped[Boolean] = mapped_column(Boolean)
+    vendor : Mapped[Boolean] = mapped_column(Boolean)
     UniqueConstraint("vehicle_id", "vendor_id", name="one_sale")
 
 class Rental(Base):
     __tablename__ = 'rentals'
-    id = Column(Integer, primary_key=True)
-    vehicle_id = Column(Integer, ForeignKey('vehicles.id'))
-    client_id = Column(Integer, ForeignKey('clients.id'))
-    start_date = Column(Date)
-    end_date = Column(Date)
-    daily_rate = Column(Float)
-    vehicle = relationship("Vehicle", back_populates="rentals")
-    client = relationship("Client", back_populates="rentals")
+    id : Mapped[int] = mapped_column(Integer, primary_key=True)
+    vehicle_id : Mapped[int] = mapped_column(Integer, ForeignKey('vehicles.id'))
+    client_id : Mapped[int] = mapped_column(Integer, ForeignKey('clients.id'))
+    start_date : Mapped[Date] = mapped_column(Date)
+    end_date : Mapped[Date] = mapped_column(Date)
+    daily_rate : Mapped[Float] = mapped_column(Float)
+    vehicle : Mapped[Boolean] = mapped_column(Boolean)
+    client : Mapped[Boolean] = mapped_column(Boolean)
 
 class Purchase(Base):
     __tablename__ = 'purchases'
-    id = Column(Integer, primary_key=True)
-    vehicle_id = Column(Integer, ForeignKey('vehicles.id'))
-    client_id = Column(Integer, ForeignKey('clients.id'))
-    vendor_id = Column(Integer, ForeignKey('vendors.id'))
-    purchase_date = Column(Date)
-    purchase_price = Column(Float)
-    vehicle = relationship("Vehicle", back_populates="purchases")
-    client = relationship("Client", back_populates="purchases")
-    vendor = relationship("Vendor", back_populates="purchases")
-
+    id : Mapped[int] = mapped_column(Integer, primary_key=True)
+    vehicle_id : Mapped[int] = mapped_column(Integer, ForeignKey('vehicles.id'))
+    client_id : Mapped[int] = mapped_column(Integer, ForeignKey('clients.id'))
+    vendor_id : Mapped[int] = mapped_column(Integer, ForeignKey('vendors.id'))
+    purchase_date : Mapped[Date] = mapped_column(Date)
+    purchase_price : Mapped[Float] = mapped_column(Float)
+    vehicle : Mapped[Boolean] = mapped_column(Boolean)
+    client : Mapped[Boolean] = mapped_column(Boolean)
+    vendor : Mapped[Boolean] = mapped_column(Boolean)
 
 class Utilisateur(Base):
     __tablename__ = 'utilisateurs'
-    id = Column(Integer, primary_key=True)
-    nom = Column(String)
-    prenom = Column(String)
-    adresse = Column(String)
-    num_tel = Column(String)
-    vehicles = relationship("Vehicle", secondary=association_table, back_populates="utilisateurs")
-    vendors = relationship("Vendor", back_populates="utilisateur")
-    clients = relationship("Client", back_populates="utilisateur")
+    id : Mapped[int] = mapped_column(Integer, primary_key=True)
+    nom : Mapped[String] = mapped_column(String)
+    prenom : Mapped[String] = mapped_column(String)
+    adresse : Mapped[String] = mapped_column(String)
+    num_tel : Mapped[String] = mapped_column(String)
+    vehicles : Mapped[Boolean] = mapped_column(Boolean)
+    vendors : Mapped[Boolean] = mapped_column(Boolean)
+    clients : Mapped[Boolean] = mapped_column(Boolean)
+
 
 class Client(Base):
     __tablename__ = 'clients'
-    id = Column(Integer, ForeignKey('utilisateurs.id'), primary_key=True)
-    rentals = relationship("Rental", back_populates="client")
-    purchases = relationship("Purchase", back_populates="client")
-    utilisateur = relationship("Utilisateur", back_populates="clients")
+    id : Mapped[int] = mapped_column(Integer, ForeignKey('utilisateurs.id'), primary_key=True)
+    rentals : Mapped[Boolean] = mapped_column(Boolean)
+    purchases : Mapped[Boolean] = mapped_column(Boolean)
+    utilisateur : Mapped[Boolean] = mapped_column(Boolean)
 
-class Vendor(Base):  
+class Vendor(Base):
     __tablename__ = 'vendors'
-    id = Column(Integer, ForeignKey('utilisateurs.id'), primary_key=True)
-    sales = relationship("Sale", back_populates="vendor")
-    purchases = relationship("Purchase", back_populates="vendor")
-    utilisateur = relationship("Utilisateur", back_populates="vendors")
+    id : Mapped[int] = mapped_column(Integer, ForeignKey('utilisateurs.id'), primary_key=True)
+    sales : Mapped[Boolean] = mapped_column(Boolean)
+    purchases : Mapped[Boolean] = mapped_column(Boolean)
+    utilisateur : Mapped[Boolean] = mapped_column(Boolean)
 
 class Vehicle(Base):
     __tablename__ = 'vehicles'
