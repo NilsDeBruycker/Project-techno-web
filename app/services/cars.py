@@ -37,10 +37,10 @@ def save_car(new_car: CarSchema):
 # Function to get all public cars
 def get_public_cars():
     with Session() as session:
-        statement = select(cars).filter(cars.status == "available")
+        statement = select(Vehicle).filter(Vehicle.status == "available")
         cars_data = session.scalars(statement).unique().all()
     return [
-        cars(
+        Vehicle(
             id=car.id,
             brand=car.brand,
             model=car.model,
@@ -168,10 +168,10 @@ def return_car(user_email: str, car_id: str):
 # Function to get all cars rented by a user
 def get_rented_cars(user_email: str):
     with Session() as session:
-        statement = select(cars).join(Rental).filter(Rental.user_email == user_email)
+        statement = select(Vehicle).join(Rental).filter(Rental.user_email == user_email)
         cars_data = session.scalars(statement).unique().all()
     return [
-        cars(
+        Vehicle(
             id=car.id,
             brand=car.brand,
             model=car.model,
@@ -183,6 +183,7 @@ def get_rented_cars(user_email: str):
         )
         for car in cars_data
     ]
+#Function search of 
 def search(search_therm: str):
     with Session() as session:
         statement=select(Vehicle)

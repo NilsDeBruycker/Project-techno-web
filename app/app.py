@@ -12,15 +12,17 @@ app.include_router(vehicle_router)
 app.include_router(user_router)
 
 # Mount static files
-app.mount('/static', StaticFiles(directory='static'), name='static')
+app.mount('/static', StaticFiles(directory='static'))
+
+
+@app.on_event('startup')
+def on_startup():
+    print("Server started.")
 
 @app.on_event("startup")
-def on_startup():
+def on_application_started():
     create_database()
-    print("Server started and database initialized.")
 
-@app.on_event("shutdown")
+
 def on_shutdown():
-    print("Server shutting down.")
-
-
+    print("Bye bye!")
