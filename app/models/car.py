@@ -16,8 +16,8 @@ class Sale(Base):
     vendor_id : Mapped[int] = mapped_column(Integer, ForeignKey('vendors.id'))
     date_of_sale : Mapped[Date] = mapped_column(Date)
     sale_price : Mapped[Float] = mapped_column(Float)
-    vehicle : Mapped[Boolean] = mapped_column(Boolean)
-    vendor : Mapped[Boolean] = mapped_column(Boolean)
+    vehicle : Mapped[Boolean] = mapped_column(Boolean)  #*
+    vendor : Mapped[Boolean] = mapped_column(Boolean)   #*
     UniqueConstraint("vehicle_id", "vendor_id", name="one_sale")
 
 class Rental(Base):
@@ -41,7 +41,7 @@ class Purchase(Base):
     purchase_price : Mapped[Float] = mapped_column(Float)
     vehicle : Mapped[Boolean] = mapped_column(Boolean)
     client : Mapped[Boolean] = mapped_column(Boolean)
-    vendor : Mapped[Boolean] = mapped_column(Boolean)
+
 
 class Utilisateur(Base):
     __tablename__ = 'utilisateurs'
@@ -50,7 +50,7 @@ class Utilisateur(Base):
     prenom : Mapped[String] = mapped_column(String)
     adresse : Mapped[String] = mapped_column(String)
     num_tel : Mapped[String] = mapped_column(String)
-    vehicles : Mapped[Boolean] = mapped_column(Boolean)
+    vehicles : Mapped[Boolean] = mapped_column(Boolean)  #
     vendors : Mapped[Boolean] = mapped_column(Boolean)
     clients : Mapped[Boolean] = mapped_column(Boolean)
 
@@ -62,12 +62,13 @@ class Client(Base):
     purchases : Mapped[Boolean] = mapped_column(Boolean)
     utilisateur : Mapped[Boolean] = mapped_column(Boolean)
 
+
 class Vendor(Base):
     __tablename__ = 'vendors'
     id : Mapped[int] = mapped_column(Integer, ForeignKey('utilisateurs.id'), primary_key=True)
     sales : Mapped[Boolean] = mapped_column(Boolean)
-    purchases : Mapped[Boolean] = mapped_column(Boolean)
     utilisateur : Mapped[Boolean] = mapped_column(Boolean)
+    Vehicule    : Mapped[Boolean] = mapped_column(Boolean)                 
 
 class Vehicle(Base):
     __tablename__ = 'vehicles'
