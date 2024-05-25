@@ -1,0 +1,34 @@
+{% macro show_cars(id,model,brand, top_speed,average_consumption,color,mileage,price_sell,price_rent,chemin_image) %}
+    <div class="card">
+        <td>{{id}}</td>
+        
+        <td>{{ model }}</td>
+        
+        <td>{{ brand }}</td>
+
+        <td>{{ top_speed }}</td>
+
+        <td>{{ average_consumption }}</td>
+
+        <td>{{ color }}</td> 
+
+        <td>{{ mileage }}</td>
+        
+        <td>{{ price_sell }}</td>
+        
+        <td>{{ price_rent }}</td>
+
+    </div>
+{% endmacro %}
+
+{% macro show_users(username,email, role, blocked) %}
+    <tr>
+        <td>{{username}}</td>
+        
+        <td>{{ email }}</td>
+        
+        <td>{{role}}</td>
+
+        <td>{{blocked}}</td>
+    </tr>
+{% endmacro %}

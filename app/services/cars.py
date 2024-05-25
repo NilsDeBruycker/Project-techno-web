@@ -4,38 +4,48 @@ from sqlalchemy.orm import relationship
 
 from app.database import Session
 from app.models.car import Vehicle
-from app.models.car import  Rental
 from app.schemas.cars import Car as CarSchema
 from app.schemas.cars import Rental as RentalSchema
 
 # Function to save a new rental
-def save_rental(new_rental: RentalSchema):
+"""def save_rental(new_rental: RentalSchema):
     with Session() as session:
         rental_entity = Rental(
             user_email=new_rental.user_email,
             car_id=new_rental.car_id
         )
         session.add(rental_entity)
-        session.commit()
+        session.commit()"""
 
+""""def sell_car(id : str,):
+    with Session() as session:
+        statement = select(Vehicle).filter(Vehicle.id == id)
+
+        
+
+        car = session.scalars(statement).one()
+        car.sell=True"""
 # Function to save a new car
 def save_car(new_car: CarSchema):
     with Session() as session:
         new_car_entity = Vehicle(
-            id=uuid4().hex,
-            brand=new_car.brand,
+            id=uuid4(),
+            make=new_car.brand,
             model=new_car.model,
-            price=new_car.price,
-            owner=new_car.owner,
-            status=new_car.status,
-            year=new_car.year,
+            price_sell=new_car.price_sell,
+            price_rent=new_car.price_rent,
+            owner_email=new_car.owner_email,
+            sell=new_car.sell,
+            rent=new_car.rent,
+            max_speed=new_car.max_speed,
             color=new_car.color,
+            mileage=new_car.mileage,
         )
         session.add(new_car_entity)
         session.commit()
 
-# Function to get all public cars
-def get_public_cars():
+# Function to get all public cars remplacer par search
+"""def get_public_cars():
     with Session() as session:
         statement = select(Vehicle).filter(Vehicle.status == "available")
         cars_data = session.scalars(statement).unique().all()
@@ -52,49 +62,59 @@ def get_public_cars():
         )
         for car in cars_data
     ]
-
+"""
 # Function to get all cars owned by a user
 def get_own_cars(user):
     with Session() as session:
-        statement = select(cars).filter(cars.owner == user.email)
+        statement = select(Vehicle).filter(Vehicle.owner_email == user.email)
         cars_data = session.scalars(statement).unique().all()
     return [
-        cars(
+        Vehicle(
             id=car.id,
-            brand=car.brand,
+            make=car.make,
             model=car.model,
-            price=car.price,
-            owner=car.owner,
-            status=car.status,
-            year=car.year,
+            #price=car.price,
+            price_sell= car.price_sell,
+            price_rent=car.price_rent,
+            owner_email=car.owner_email,
+            max_speed=car.max_speed,
+            mileage=car.mileage,
+            average_consumption=car.average_consumption,
             color=car.color,
+            sell=(car.price_sell!=0),
+            rent=(car.price_rent!=0)
         )
         for car in cars_data
     ]
 
 # Function to get all cars
-def get_all_cars() -> list[cars]:
+def get_all_cars() -> list[Vehicle]:
     with Session() as session:
-        statement = select(cars)
+        statement = select(Vehicle)
         cars_data = session.scalars(statement).unique().all()
     return [
-        cars(
+       Vehicle(
             id=car.id,
-            brand=car.brand,
+            make=car.make,
             model=car.model,
-            price=car.price,
-            owner=car.owner,
-            status=car.status,
-            year=car.year,
+            #price=car.price,
+            price_sell= car.price_sell,
+            price_rent=car.price_rent,
+            owner_email=car.owner_email,
+            max_speed=car.max_speed,
+            mileage=car.mileage,
+            average_consumption=car.average_consumption,
             color=car.color,
-        )
+            sell=(car.price_sell!=0),
+            rent=(car.price_rent!=0)
+            )
         for car in cars_data
     ]
 
 # Function to delete a car by its ID
 def delete_car_by_id(car_id: str):
     with Session() as session:
-        statement = select(cars).filter(cars.id == car_id)
+        statement = select(Vehicle).filter(Vehicle.id == car_id)
         car = session.scalars(statement).one()
         session.delete(car)
         session.commit()
@@ -102,47 +122,72 @@ def delete_car_by_id(car_id: str):
 # Function to check if a car exists by its ID
 def is_car_exist(car_id: str):
     with Session() as session:
-        statement = select(cars).filter(cars.id == car_id)
+        statement = select(Vehicle).filter(Vehicle.id == car_id)
         car = session.scalar(statement)
         return car is not None
 
 # Function to get a car by its ID
 def get_car_by_id(car_id):
     with Session() as session:
-        statement = select(cars).filter(cars.id == car_id)
-        car = session.scalars(statement).one_or_none()
+        statement = select(Vehicle).filter(Vehicle.id == car_id)
+        car = session.scalars(statement).one()
         if car:
-            return cars(
+            return Vehicle(
                 id=car.id,
-                brand=car.brand,
+                make=car.make,
                 model=car.model,
-                price=car.price,
-                owner=car.owner,
-                status=car.status,
-                year=car.year,
+                #price=car.price,
+                price_sell= car.price_sell,
+                price_rent=car.price_rent,
+                owner_email=car.owner_email,
+                max_speed=car.max_speed,
+                mileage=car.mileage,
+                average_consumption=car.average_consumption,
                 color=car.color,
+                sell=(car.price_sell!=0),
+                rent=(car.price_rent!=0)
             )
-        return None
 
-# Function to modify a car by its ID
-def modify_car_by_id(car_id: str, modified_car) -> cars | None:
+# Function to modify a car by its ID not needed ferai si temp
+def modify_car_by_id(car_id: str, modified_car :dict,transaction : bool=False) -> None:
     with Session() as session:
-        statement = select(cars).filter(cars.id == car_id)
-        car = session.scalars(statement).one_or_none()
+        statement = select(Vehicle).filter(Vehicle.id == car_id)
+        
+
+        car = session.scalars(statement).one()
         if car:
-            car.owner = modified_car.get("owner", car.owner)
-            car.brand = modified_car.get("brand", car.brand)
-            car.model = modified_car.get("model", car.model)
-            car.status = modified_car.get("status", car.status)
-            car.price = modified_car.get("price", car.price)
-            car.year = modified_car.get("year", car.year)
-            car.color = modified_car.get("color", car.color)
+            car.owner_email = modified_car["owner_email"]
+            car.make = modified_car["brand"] 
+            car.model = modified_car["model"]
+            car.max_speed = modified_car["max_speed"]
+            car.mileage = modified_car["mileage"]
+            car.average_consumption = modified_car["average_consumption"]
+            car.color = modified_car["color"]
+            car.price_sell = modified_car["price_sell"]
+            car.price_rent = modified_car["price_rent"]
+            car.sell = modified_car["sell"]
+            car.rent = modified_car["rent"]
+            if transaction:
+                car.rent_owner_email=modified_car["old owner email"]
             session.commit()
             return car
         return None
+        id: int
+    model: str
+    brand: str
+    color: str
+    max_speed: int
+    mileage: int
+    average_consumption: float
+    price_sell: float
+    price_rent: float
+    rented: bool
+    sold:bool
+    owner_email: str
+
 
 # Function to rent a car
-def rent_car(user_email: str, car_id: str):
+"""def rent_car(user_email: str, car_id: str):
     with Session() as session:
         car = session.query(cars).filter(cars.id == car_id, cars.status == "available").one_or_none()
         if car:
@@ -151,10 +196,10 @@ def rent_car(user_email: str, car_id: str):
             car.status = "rented"
             session.commit()
             return True
-        return False
+        return False"""
 
 # Function to return a rented car
-def return_car(user_email: str, car_id: str):
+"""def return_car(user_email: str, car_id: str):
     with Session() as session:
         rental = session.query(Rental).filter(Rental.user_email == user_email, Rental.car_id == car_id).one_or_none()
         if rental:
@@ -163,23 +208,28 @@ def return_car(user_email: str, car_id: str):
             session.delete(rental)
             session.commit()
             return True
-        return False
+        return False"""
 
 # Function to get all cars rented by a user
 def get_rented_cars(user_email: str):
     with Session() as session:
-        statement = select(Vehicle).join(Rental).filter(Rental.user_email == user_email)
-        cars_data = session.scalars(statement).unique().all()
+        statement = select(Vehicle).filter(Vehicle.rent_owner_email == user_email)
+        cars_data = session.scalars(statement).all()
     return [
         Vehicle(
             id=car.id,
-            brand=car.brand,
+            make=car.make,
             model=car.model,
-            price=car.price,
-            owner=car.owner,
-            status=car.status,
-            year=car.year,
+            price_vente=car.price_sell,
+            price_rent=car.price_rent,
+
+            owner_email=car.owner_email,
+            max_speed=car.max_speed,
+            mileage=car.mileage,
+            average_consumption=car.average_consumption,
             color=car.color,
+            sell=car.sell ,
+            rent=car.rent
         )
         for car in cars_data
     ]
@@ -194,7 +244,7 @@ def search(search_therm: str):
                 if((car.make==search_therm or
                     search_therm==car.model or
                     search_therm==car.color)
-                    and not( car.rentals and car.sales)):
+                    and not( car.rent or car.sell)):
 
                     
                 
@@ -208,23 +258,24 @@ def search(search_therm: str):
                         mileage=car.mileage,
                         average_consumption=car.average_consumption,
                         color=car.color,
-                        sales=False,
-                        rentals=False
+                        sell=(car.price_sell!=0),
+                        rent=(car.price_rent!=0)
                         ))
             else:
-                if(not( car.rentals and car.sales)):                                            
+                if(( car.sell or car.rent)):                                            
                     selected_cars.append(Vehicle(
                         id=car.id,
                         make=car.make,
                         model=car.model,
-                        #price=car.price,
+                        price_sell= car.price_sell,
+                        price_rent=car.price_rent,
                         owner_email=car.owner_email,
                         max_speed=car.max_speed,
                         mileage=car.mileage,
                         average_consumption=car.average_consumption,
                         color=car.color,
-                        sales=False,
-                        rentals=False
+                        sell=(car.price_sell!=0),
+                        rent=(car.price_rent!=0)
                         ))
         return selected_cars
     

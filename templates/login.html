@@ -1,0 +1,22 @@
+{% extends "empty_page.html" %}
+{% from "my_macro.html" import show_books %}
+{% block content %}
+<form action="/users/login" method="post">
+<div class="form-group">
+    <label for="email">email</label>
+    <input type="textarea" class="form-control" id="email"
+           name="email" /> </div>
+
+<div class="form-group">
+    <label for="password">pasword</label>
+    <input type="textarea" class="form-control" id="password"
+           name="password" />
+
+
+        </div>
+
+        <button type="submit" class="btn btn-success btn-delete">login</button>
+    </form>
+    <a class="btn btn-outline-dark mx-2" href="/users/sign_up">sign up</a>
+
+    {% endblock %}

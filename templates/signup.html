@@ -1,0 +1,34 @@
+{% extends "empty_page.html" %}
+{% from "my_macro.html" import show_books %}
+{% block content %}
+<form action="/users/sign_up" method="post">
+
+    <div class="form-group">
+    <label for="username">username</label>
+    <input type="text" class="form-control" id="username"
+           name="username" placeholder="" />
+    </div>
+    <div class="form-group">
+    <label for="email">email</label>
+    <input type="textarea" class="form-control" id="email"
+           name="email" />
+
+    <div class="form-group">
+    <label for="password">pasword</label>
+    <input type="textarea" class="form-control" id="password"
+           name="password" />
+
+    <div class="form-group">
+        <label for="password2">confirm pasword</label>
+        <input type="textarea" class="form-control" id="password2"
+                   name="password2" />
+        
+    </div>
+    <div class="form-group">
+        <input type="checkbox" class="form-check-input" name="seller" id="seller">
+        <label class="form-check-label" for="seller">compte vendeur</label>
+      </div>
+        <button type="submit" class="btn btn-success btn-delete">sign up</button>
+</form>
+
+    {% endblock %}

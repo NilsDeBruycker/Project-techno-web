@@ -11,7 +11,7 @@ Session = sessionmaker(engine)
 class Base(DeclarativeBase):
     pass
 
-from app.models.car import Sale,Rental,Purchase,Vehicle,Client,Vendor,Utilisateur
+from app.models.car import Vehicle,User
 
 
 def create_database():

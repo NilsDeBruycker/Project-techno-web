@@ -1,12 +1,12 @@
 from sqlalchemy import select
-from app.schemas import UserSchema
+from app.schemas.UserSchema import UserSchema
 from app.database import Session
-from app.models.car import Utilisateur
+from app.models.car import User
 
 
 def get_user_by_username(username: str):
     with Session() as session:
-        statement = select(Utilisateur).filter(Utilisateur.username == username)
+        statement = select(User).filter(User.username == username)
         user = session.scalars(statement).one_or_none()
         if user is not None:
             return UserSchema(
@@ -15,13 +15,14 @@ def get_user_by_username(username: str):
                 password=user.password,
                 role=user.role,
                 blocked=user.blocked,
+                seller=user.seller
             )
     return None
 
 
 def get_user_by_email(email: str):
     with Session() as session:
-        statement = select(Utilisateur).filter(Utilisateur.email == email)
+        statement = select(User).filter(User.email == email)
         user = session.scalar(statement)
         if user is not None:
             return UserSchema(
@@ -30,18 +31,21 @@ def get_user_by_email(email: str):
                 password=user.password,
                 role=user.role,
                 blocked=user.blocked,
+                seller=user.seller
             )
     return None
 
 
 def sign_up_user(new_user: UserSchema):
     with Session() as session:
-        new_user_instance = Utilisateur(
+        new_user_instance = User(
             email=new_user.email,
             username=new_user.username,
             password=new_user.password,
             role=new_user.role,
             blocked=new_user.blocked,
+            seller=new_user.seller,
+            monney=0
         )
         session.add(new_user_instance)
         session.commit()
@@ -50,15 +54,16 @@ def sign_up_user(new_user: UserSchema):
 
 def get_all_users():
     with Session() as session:
-        statement = select(Utilisateur)
+        statement = select(User)
         users_data = session.scalars(statement).unique().all()
         return [
-            Utilisateur(
+            User(
                 email=user.email,
                 password=user.password,
                 username=user.username,
                 role=user.role,
                 blocked=user.blocked,
+                seller=user.seller
             )
             for user in users_data
         ]
@@ -66,7 +71,7 @@ def get_all_users():
 
 def block_user(email: str):
     with Session() as session:
-        user = session.query(Utilisateur).filter(Utilisateur.email == email).first()
+        user = session.query(User).filter(User.email == email).first()
         if user is not None:
             user.blocked = True
             session.commit()
@@ -74,24 +79,24 @@ def block_user(email: str):
 
 def unblock_user(email: str):
     with Session() as session:
-        user = session.query(Utilisateur).filter(Utilisateur.email == email).first()
+        user = session.query(User).filter(User.email == email).first()
         if user is not None:
             user.blocked = False
             session.commit()
 
 
-def promote_user(email: str) -> Utilisateur:
+def promote_user(email: str) -> User:
     with Session() as session:
-        user = session.query(Utilisateur).filter(Utilisateur.email == email).first()
+        user = session.query(User).filter(User.email == email).first()
         if user is not None:
             user.role = "admin"
             session.commit()
     return user
 
 
-def demote_user(email: str) -> Utilisateur:
+def demote_user(email: str) -> User:
     with Session() as session:
-        user = session.query(Utilisateur).filter(Utilisateur.email == email).first()
+        user = session.query(User).filter(User.email == email).first()
         if user:
             user.role = "normal"
             session.commit()
@@ -100,15 +105,15 @@ def demote_user(email: str) -> Utilisateur:
 
 def delete_user_by_email(email: str):
     with Session() as session:
-        statement = select(Utilisateur).filter(Utilisateur.email == email)
+        statement = select(User).filter(User.email == email)
         user = session.execute(statement).scalar_one()
         session.delete(user)
         session.commit()
 
 
-def modify_user(new_username: str, current_user: Utilisateur):
+def modify_user(new_username: str, current_user: User):
     with Session() as session:
-        statement = select(Utilisateur).filter(Utilisateur.email == current_user.email)
+        statement = select(User).filter(User.email == current_user.email)
         user = session.scalars(statement).one()
         user.username = new_username
         session.commit()
@@ -116,7 +121,7 @@ def modify_user(new_username: str, current_user: Utilisateur):
 
 def change_password(email: str, new_password: str):
     with Session() as session:
-        statement = select(Utilisateur).filter(Utilisateur.email == email)
+        statement = select(User).filter(User.email == email)
         user = session.scalars(statement).one()
         user.password = new_password
         session.commit()

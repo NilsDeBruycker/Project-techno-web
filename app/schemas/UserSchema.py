@@ -1,15 +1,9 @@
 from pydantic import BaseModel
-
-class UserBase(BaseModel):
+class UserSchema(BaseModel):
     username: str
-
-class UserCreate(UserBase):
+    email: str
     password: str
     role: str
-
-class User(UserBase):
-    id: int
-    role: str
-
-    class Config:
-        orm_mode = True
+    blocked: bool
+    seller:bool
+    monney: float

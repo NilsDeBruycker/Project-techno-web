@@ -1,0 +1,89 @@
+{% extends "empty_page.html" %}
+{% from "my_macro.html" import show_books %}
+{% block content %}
+{% if current_user is not none %}
+    <h2>Utilisateur connecté : {{ current_user.username }}</h2>
+{% endif %}
+<h1>My Books</h1>
+<div class="container">
+    <table class="table">
+        <tr class="position-sticky">
+            <th>id</th>
+            <th>nom</th>
+            <th>Auteur</th>
+            <th>Editeur</th>
+        </tr>
+        {% set ns = namespace(i = 0) %}
+        {% for book in books %}
+            {{ show_books(book.id, book.name, book.Author, book.Editor,book.owner,book.Prix,book.status) }}
+            {% set ns.i = ns.i + 1 %}
+        {% endfor %}
+        number of books {{ns.i}}
+    </table> 
+</div>
+{%if current_user is none%}
+<div>
+    <a class="btn btn-outline-dark mx-2" href="/users/login">Log In</a>
+</div>
+{% endif %}
+<div>
+    <form action="/users/modify" method="post">
+        
+    <div class="form-group">
+        <label for="name">nouveau nom utilisateur</label>
+        <input type="text" class="form-control" id="new_username"
+            name="new_username" placeholder="" />
+            <button type="submit" class="btn btn-success btn-delete"> change username</button>
+        </form>
+    </div>
+    <form action="/users/new_password" method="post">
+        
+        <div class="form-group">
+            <label for="name">nouveau mot de passe</label>
+            <input type="text" class="form-control" id="password"
+                name="password" placeholder="" />
+                
+                
+        </div>
+        
+        <div class="form-group">
+            <label for="name">nouveau mot de passe</label>
+            <input type="text" class="form-control" id="password2"
+                name="password2" placeholder="" />
+                <button type="submit" class="btn btn-success btn-delete"> change pasword</button>
+        </div>
+    </form>
+        
+    <div class="col">
+        <form action="/books/sell" method="post">
+            <div class="form-group">
+                <input type="text" class="form-control" id="id_book_to_sell" name="id" placeholder="Entrez l'id du livre à vendre" />
+            </div>
+            <button type="submit" class="btn btn-success btn-delete">vendre livre</button>
+        </form>
+    </div> 
+    <div class="col">
+        <form action="/books/unsell" method="post">
+            <div class="form-group">
+                <input type="text" class="form-control" id="id_book_to_unsell" name="id" placeholder="Entrez l'id du livre à retirer de la vente" />
+            </div>
+            <button type="submit" class="btn btn-success btn-delete">retirer livre de la vente</button>
+        </form>
+    </div> 
+    <div class="col">
+        <form action="/books/change_price" method="post">
+            <div class="form-group">
+                <input type="text" class="form-control" id="id_book_to_change price" name="id" placeholder="Entrez l'id du livre don vous vouler Modifierle prix" />
+            </div>
+            <div class="form-group">
+                <input type="text" class="form-control" id="price" name="price" placeholder="Entrez le nouveau prix" />
+            </div>
+            <button type="submit" class="btn btn-success btn-delete">changer le prix du livre</button>
+        </form>
+        <div class="col">
+            <a class="btn btn-outline-dark mx-2" href="/books/">Retour</a>
+        </div>
+        <div class="col">
+    </div> 
+</div>
+{% endblock %}

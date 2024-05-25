@@ -1,0 +1,67 @@
+{% extends "empty_page.html" %}
+{% from "my_macro.html" import show_users %}
+{% block content %}
+{% if current_user is not none %}
+    <h2>Utilisateur connecté : {{ current_user.username }}</h2>
+{% endif %}
+<h1>USERS</h1>
+<div class="container">
+    <table class="table">
+        <tr class="position-sticky">
+            <th>username</th>
+            <th>email</th>
+            <th>role</th>
+            <th>blocked</th>
+        </tr>
+        {% for user in users %}
+            {{ show_users(user.username, user.email, user.role, user.blocked) }}
+        {% endfor %}
+    </table> 
+</div>
+
+        <div class="container mt-3">
+        <div class="row">
+            <div class="col">
+                <form action="/users/promote" method="post">
+                    <div class="form-group">
+                        <input type="text" class="form-control" id="email" name="email" placeholder=" Entrez l'email de l'utilisateur" />
+                    </div>
+                    <button type="submit" class="btn btn-success btn-delete">promouvoir</button>
+                </form>
+            <div class="col">
+                <form action="/users/demote" method="post">
+                    <div class="form-group">
+                        <input type="text" class="form-control" id="email to rank down" name="email" placeholder="Entrez l'email de l'utilisateur" />
+                    </div>
+                    <button type="submit" class="btn btn-success btn-delete">demouvoir</button>
+                </form>
+            <div class="col">
+                <form action="/users/block" method="post">
+                    <div class="form-group">
+                        <input type="text" class="form-control" id="email to block" name="email" placeholder="Entrez l'email de l'utilisateur" />
+                    </div>
+                    <button type="submit" class="btn btn-success btn-delete">bloquer</button>
+                </form>
+            <div class="col">
+                <form action="/users/unblock" method="post">
+                    <div class="form-group">
+                        <input type="text" class="form-control" id="email_user_to_unblock" name="email" placeholder="Entrez l'email de l'utilisateur" />
+                    </div>
+                    <button type="submit" class="btn btn-success btn-delete">debloquer</button>
+                </form>
+            </div>
+                <form action="/users/delete" method="post">
+                    <div class="form-group">
+                        <input type="text" class="form-control" id="email_user_to_delete" name="email" placeholder="Entrez l'email de l'utilisateur a delete" />
+                    </div>
+                    <button type="submit" class="btn btn-success btn-delete">delete</button>
+                </form>
+                <div class="col">
+                    <a class="btn btn-outline-dark mx-2" href="/books/">Retour</a>
+                </div>
+                
+                <div class="col">
+            </div>
+        </div>
+    </div>
+{% endblock %}

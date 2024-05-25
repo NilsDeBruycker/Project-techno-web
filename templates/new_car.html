@@ -1,0 +1,61 @@
+{% extends "empty_page.html" %}
+
+{% block content %}
+
+<h1>Créer un nouveau livre</h1>
+
+<form action="/cars/new" method="post">
+
+    <div class="form-group">
+        <label for="make">Nom du livre</label>
+        <input type="text" class="form-control" id="make"
+               name="make" placeholder="" />
+    </div>
+
+    <div class="form-group">
+        <label for="model">Auteur du Livre</label>
+        <input type="textarea" class="form-control" id="model"
+               name="model" />
+    </div>
+    
+    <div class="form-group">
+        <label for="price_sell">price_sell</label>
+        <input type="float" class="form-control" id="price_sell"
+               name="price_sell" />
+    </div>
+
+    <div class="form-group">
+        <label for="price_rent">price_rent</label>
+        <input type="textarea" class="form-control" id="price_rent"
+               name="price_rent" />
+    </div>
+
+    <div class="form-group">
+        <label for="color">color</label>
+        <input type="textarea" class="form-control" id="color"
+               name="color" />
+    </div>
+    <div class="form-group">
+        <label for="max_speed"> max_speed</label>
+        <input type="text" class="form-control" id="max_speed"
+               name="max_speed" placeholder="" />
+    </div>
+    <div class="form-group">
+        <label for="mileage"> mileage</label>
+        <input type="text" class="form-control" id="mileage"
+               name="mileage" placeholder="" />
+    </div>
+    <div class="form-group">
+        <label for="average_consumption"> average_consumption</label>
+        <input type="text" class="form-control" id="average_consumption"
+               name="average_consumption" placeholder="" />
+    </div>
+    <button type="submit" class="btn btn-success my-4">Créer un Livre </button>
+
+</form>
+
+<div>
+    <a class="btn btn-outline-dark mx-2" href="/books/">Retour</a>
+</div>
+
+{% endblock %}
