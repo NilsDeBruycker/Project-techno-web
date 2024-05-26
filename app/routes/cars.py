@@ -6,6 +6,7 @@ from pydantic import ValidationError
 from app.schemas.cars import Car # Assuming you have a Car and UserSchema schema
 from app.schemas.UserSchema import UserSchema
 import app.services.cars as service  # Assuming you have a service module for cars
+import app.services.users as user_service
 from app.login_manager import login_manager
 from fastapi.templating import Jinja2Templates
 from fastapi import Request
@@ -18,7 +19,7 @@ templates = Jinja2Templates(directory="templates")
 def get_all_cars(request: Request, user: UserSchema = Depends(login_manager.optional)):
     return templates.TemplateResponse(
             "front_page.html",
-            context={'request': request}
+            context={'request': request,"user":user}
     )
 
 @router.get('/new')
@@ -33,7 +34,7 @@ def get_car(request: Request, user: UserSchema = Depends(login_manager)):
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="You are blocked."
         )
-    elif user.role != "vendeur":
+    elif user.seller != True and user.role!="admin":
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="seul les vendeurs peuvent utiliser cette page"
@@ -50,6 +51,11 @@ def create_new_car(make: Annotated[str, Form()], model: Annotated[str, Form()],c
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="please input a price for rent or sell",
         )
+    if price_sell<0 or price_rent<0:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="please input a price not under 0 for rent or sell",
+        )
     new_car_data = {
         "id": str(uuid4()),
         "brand": make,
@@ -61,8 +67,8 @@ def create_new_car(make: Annotated[str, Form()], model: Annotated[str, Form()],c
         "price_sell": price_sell,
         "price_rent": price_rent,
         "owner_email": user.email,
-        "sell":True,
-        "rent":True
+        "sell":(price_sell!=0),
+        "rent":(price_rent!=0)
         
     }
     try:
@@ -73,8 +79,18 @@ def create_new_car(make: Annotated[str, Form()], model: Annotated[str, Form()],c
             detail="Invalid make, model, or other for the car.",
         )
     service.save_car(new_car_test)
-    return RedirectResponse(url="/cars/", status_code=302)
-
+    return RedirectResponse(url="/cars/me", status_code=302)
+@router.get("/modify")
+def go_to_modif(request:Request,user: UserSchema = Depends(login_manager)):
+    if user.seller!=True and user.role!='admin':
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="only seller can modify cars")
+    else :
+        return templates.TemplateResponse(
+            "modify_car.html",
+            context = {"request":request,"user":user}
+        )
 @router.post('/modify')
 def modify_car(id: Annotated[str, Form()],make: Annotated[str, Form()], model: Annotated[str, Form()],color:Annotated[str,Form()],max_speed: Annotated[int,Form()], mileage: Annotated[int, Form()],average_consumption: Annotated[int,Form()],user: UserSchema = Depends(login_manager),price_sell:Annotated[float, Form()]=0,price_rent: Annotated[float,Form()]=0):
     if not service.is_car_exist(id):
@@ -82,10 +98,15 @@ def modify_car(id: Annotated[str, Form()],make: Annotated[str, Form()], model: A
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Car ID not found"
         )
-    if user.seller!=True:
+    if user.seller!=True and user.role!='admin':
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="only seller can modify cars")
+    if price_sell<0 or price_rent<0:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="please input a price not under 0 for rent or sell",
+        )
     new_car_data = {
         "id": id,
         "brand": make, #supr?
@@ -98,7 +119,7 @@ def modify_car(id: Annotated[str, Form()],make: Annotated[str, Form()], model: A
         "price_rent": price_rent,
         "owner_email": user.email, 
         "sell":(price_sell!=0),
-        "rent":(price_rent!=0),
+        "rent":(price_rent!=0)
     }
     try:
         new_car_test = Car(**new_car_data)
@@ -108,7 +129,7 @@ def modify_car(id: Annotated[str, Form()],make: Annotated[str, Form()], model: A
             detail="Invalid make, model, or year for the car.",
         )
     service.modify_car_by_id(id, new_car_data)
-    return RedirectResponse(url="/cars/", status_code=302)
+    return RedirectResponse(url="/cars/me", status_code=302)
 
 @router.post('/delete')
 def deletecar(id: Annotated[str, Form()], user: UserSchema = Depends(login_manager.optional)):
@@ -120,7 +141,7 @@ def deletecar(id: Annotated[str, Form()], user: UserSchema = Depends(login_manag
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="blocked."
         )
-    elif user.role!="admin" or user.seller!=True:
+    elif user.role!="admin" and user.seller!=True:
         return HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="only admins and sellers can use this page"
@@ -138,8 +159,17 @@ def deletecar(id: Annotated[str, Form()], user: UserSchema = Depends(login_manag
             detail="you cannot delete a car that is rented or not yours"
         )
     service.delete_car_by_id(id)
-    return RedirectResponse(url="/cars/", status_code=302)
+    return RedirectResponse(url="/cars/me", status_code=302)
 
+@router.get('/me')
+
+def go_to_page_perso(request: Request,user: UserSchema = Depends(login_manager)):
+    cars=service.get_own_cars(user)
+    cars_rented=service.get_rented_cars(user)
+    return templates.TemplateResponse(
+        "page_perso.html",
+        context= {"request":request,"user":user, "cars":cars,"rented_cars":cars_rented}
+    )
 """@router.post('/sell')
 def sell_car(id: Annotated[str, Form()], user: UserSchema = Depends(login_manager)):
     car = service.get_car_by_id(id)
@@ -233,7 +263,12 @@ def buy_car(id: Annotated[str, Form()], user: UserSchema = Depends(login_manager
     elif car.rent_owner_email is not None:
         return HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
-            detail="you buy a car that is rented"
+            detail="you cannot buy a car that is rented to someone"
+        )
+    elif car.price_sell>user.monney:
+        return HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="you do not have enough money"
         )
     new_car_data = {
         "id": id,
@@ -250,10 +285,11 @@ def buy_car(id: Annotated[str, Form()], user: UserSchema = Depends(login_manager
         "rent":False,
     }
     service.modify_car_by_id(car.id,new_car_data)
-    return RedirectResponse(url="/cars/", status_code=302)
+    user_service.change_monney(user,user.monney-car.price_sell)
+    return RedirectResponse(url="/cars/me", status_code=302)
 
 @router.post('/rent')
-def buy_car(id: Annotated[str, Form()], user: UserSchema = Depends(login_manager)):
+def rent_car(id: Annotated[str, Form()], user: UserSchema = Depends(login_manager)):
     car = service.get_car_by_id(id)
     if car is None:
         raise HTTPException(
@@ -275,6 +311,11 @@ def buy_car(id: Annotated[str, Form()], user: UserSchema = Depends(login_manager
             status_code=status.HTTP_403_FORBIDDEN,
             detail="only admins and buyers can use this page"
         )
+    elif car.price_rent>user.monney:
+        return HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="you do not have enough money"
+        )
     new_car_data = {
         "id": id,
         "brand": car.make, #supr?
@@ -285,7 +326,7 @@ def buy_car(id: Annotated[str, Form()], user: UserSchema = Depends(login_manager
         "average_consumption": car.average_consumption, #supr?
         "price_sell": car.sell,
         "price_rent": car.rent,
-        "owner_email": user.email, 
+        "owner_email": car.owner_email, 
         "sell":car.sell,
         "rent":False,
         "rent_owner_email":user.email
@@ -298,6 +339,7 @@ def buy_car(id: Annotated[str, Form()], user: UserSchema = Depends(login_manager
             detail="Invalid make, model, or year for the car.",
         )
     service.modify_car_by_id(car.id,new_car_data,True)
+    user_service.change_monney(user,user.monney-car.price_rent)
     return RedirectResponse(url="/cars/", status_code=302)
 """@router.post("/change_owner")
 def change_car_owner(id: Annotated[str, Form()], new_owner: Annotated[str, Form()], user: UserSchema = Depends(login_manager)):
@@ -349,7 +391,7 @@ def rent_car(id: Annotated[str, Form()], user: UserSchema = Depends(login_manage
         "average_consumption": car.average_consumption, #supr?
         "price_sell": car.sell,
         "price_rent": car.rent,
-        "owner_email": user.email, 
+        "owner_email": car.owner_email, 
         "sell":car.sell,
         "rent":True,
         "rent_owner_email": None
@@ -359,12 +401,25 @@ def rent_car(id: Annotated[str, Form()], user: UserSchema = Depends(login_manage
     except ValidationError:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Invalid make, model, or year for the car.",
+            detail="Invalid make, model, or else for the car.",
         )
     service.modify_car_by_id(car.id, new_car_data,True)
-    return RedirectResponse(url="/cars/", status_code=302)
+    return RedirectResponse(url="/cars/me", status_code=302)
+
+@router.get('/search')
+def go_to_search(request : Request):
+    cars=service.search('')
+    return templates.TemplateResponse(
+        "search.html",
+        context={"request":request,'cars':cars,"search_therm":''}
+    )
+    
 
 
 @router.post('/search')
-def search(search_therm: Annotated[str,Form()]):
-    service.search(search_therm)
+def search(request : Request , search_therm: Annotated[str,Form()]="" ,max_price_sell: Annotated[float,Form()]=1000000000,max_price_rent: Annotated[float,Form()]=1000000000,max_speed: Annotated[int,Form()]=6000,max_lineage :Annotated[int,Form()]=500000,max_consomation  :Annotated[int,Form()]=200):
+    cars= service.search(search_therm,max_price_sell,max_price_rent,max_lineage,max_speed,max_consomation)
+    return templates.TemplateResponse(
+        "search.html",
+        context={"request":request,'cars':cars,"search_therm":search_therm}
+    )

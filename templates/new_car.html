@@ -2,60 +2,59 @@
 
 {% block content %}
 
-<h1>Créer un nouveau livre</h1>
+<h1>Créer une nouvelle voiture</h1>
 
 <form action="/cars/new" method="post">
 
-    <div class="form-group">
-        <label for="make">Nom du livre</label>
+    <div class="form-group">marque de la voiture</label>
         <input type="text" class="form-control" id="make"
-               name="make" placeholder="" />
+               name="make" placeholder="" required />
     </div>
 
     <div class="form-group">
-        <label for="model">Auteur du Livre</label>
+        <label for="model">model</label>
         <input type="textarea" class="form-control" id="model"
-               name="model" />
+               name="model" required/>
     </div>
     
     <div class="form-group">
-        <label for="price_sell">price_sell</label>
+        <label for="price_sell">prix vente</label>
         <input type="float" class="form-control" id="price_sell"
                name="price_sell" />
     </div>
 
     <div class="form-group">
-        <label for="price_rent">price_rent</label>
+        <label for="price_rent">prix location</label>
         <input type="textarea" class="form-control" id="price_rent"
                name="price_rent" />
     </div>
 
     <div class="form-group">
-        <label for="color">color</label>
+        <label for="color">couleur</label>
         <input type="textarea" class="form-control" id="color"
-               name="color" />
+               name="color" required/>
     </div>
     <div class="form-group">
-        <label for="max_speed"> max_speed</label>
+        <label for="max_speed"> vitesse max</label>
         <input type="text" class="form-control" id="max_speed"
-               name="max_speed" placeholder="" />
+               name="max_speed" placeholder="" required/>
     </div>
     <div class="form-group">
-        <label for="mileage"> mileage</label>
+        <label for="mileage"> kilometrage</label>
         <input type="text" class="form-control" id="mileage"
-               name="mileage" placeholder="" />
+               name="mileage" placeholder="" required/>
     </div>
     <div class="form-group">
-        <label for="average_consumption"> average_consumption</label>
+        <label for="average_consumption"> consomation au 100</label>
         <input type="text" class="form-control" id="average_consumption"
-               name="average_consumption" placeholder="" />
+               name="average_consumption" placeholder="" required />
     </div>
-    <button type="submit" class="btn btn-success my-4">Créer un Livre </button>
+    <button type="submit" class="btn btn-success my-4">Créer une voiture </button>
 
 </form>
 
 <div>
-    <a class="btn btn-outline-dark mx-2" href="/books/">Retour</a>
+    <a class="btn btn-outline-dark mx-2" href="/cars/me">Retour</a>
 </div>
 
 {% endblock %}

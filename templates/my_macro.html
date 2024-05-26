@@ -1,22 +1,124 @@
-{% macro show_cars(id,model,brand, top_speed,average_consumption,color,mileage,price_sell,price_rent,chemin_image) %}
-    <div class="card">
-        <td>{{id}}</td>
+<link rel="stylesheet" href="../static/search.css">
+{% macro show_cars(id,model,brand, top_speed,average_consumption,color,mileage,price_sell,price_rent,sell,rent,owner_email,rent_owner_email) %}
+    <div class="car_card" id="car_card">
+        <img src=../static/{{brand}}.png alt="car" class="card-image" style="width: 3cm; height: auto;">
+        <p>id :{{id}}</p>
         
-        <td>{{ model }}</td>
+        <p>model :{{ model }}</p>
         
-        <td>{{ brand }}</td>
+        <p>brand :{{ brand }}</p>
 
-        <td>{{ top_speed }}</td>
+        <p>top_speed :{{ top_speed }}</p>
 
-        <td>{{ average_consumption }}</td>
+        <p>average_consumption :{{ average_consumption }}</p>
 
-        <td>{{ color }}</td> 
+        <p>color :{{ color }}</p> 
 
-        <td>{{ mileage }}</td>
+        <p>mileage :{{ mileage }}</p>
         
-        <td>{{ price_sell }}</td>
         
-        <td>{{ price_rent }}</td>
+        
+        
+        {%if owner_email is not none %}
+        owner :<p>{{owner_email}}</p>
+        {%endif%}
+        {%if rent_owner_email is not none%}
+        renter :<p>{{rent_owner_email}}</p>
+        {%endif%}
+        {%if sell==true%}
+        <p>price_sell :{{ price_sell }}</p>
+        <form action="/cars/buy" method="post">
+
+            <div class="form-group">
+               <input type="hidden" class="form-control" id="id"
+                      name="id" value={{id}} />
+            </div>
+            <button class="btn btn-success btn-delete" type="submit">acheter</button>  
+        </form>
+        {%endif%}
+        {%if rent==true%}
+        <p>price_rent :{{ price_rent }}</p>
+        <form action="/cars/rent" method="post">
+
+            <div class="form-group">
+               <input type="hidden" class="form-control" id="id"
+                      name="id" value={{id}} />
+            </div>
+            <button class="btn btn-success btn-delete" type="submit">louer</button>  
+        </form>
+        {%endif%}
+
+    </div>
+{% endmacro %}
+
+{% macro show_cars_pers(id,model,brand, top_speed,average_consumption,color,mileage,price_sell,price_rent,sell,rent,owner_email,rent_owner_email) %}
+    <div class="car_card" id="car_card">
+        <img src=../static/{{brand}}.png alt="car" class="card-image" style="width: 3cm; height: auto;">
+        <p>id :{{id}}</p>
+        
+        <p>model :{{ model }}</p>
+        
+        <p>brand :{{ brand }}</p>
+
+        <p>top_speed :{{ top_speed }}</p>
+
+        <p>average_consumption :{{ average_consumption }}</p>
+
+        <p>color :{{ color }}</p> 
+
+        <p>mileage :{{ mileage }}</p>
+        
+        <p>price_sell :{{ price_sell }}</p>
+        
+        <p>price_rent :{{ price_rent }}</p>
+
+        {%if owner_email is not none %}
+        owner :<p>{{owner_email}}</p>
+        {%endif%}
+        {%if rent_owner_email is not none%}
+        renter :<p>{{rent_owner_email}}</p>
+        {%endif%}
+        
+
+    </div>
+{% endmacro %}
+
+{% macro show_cars_pers_v(id,model,brand, top_speed,average_consumption,color,mileage,price_sell,price_rent,sell,rent,owner_email,rent_owner_email) %}
+    <div class="car_card" id="car_card">
+        <img src=../static/{{brand}}.png alt="car" class="card-image" style="width: 3cm; height: auto;">
+        <p>id :{{id}}</p>
+        
+        <p>model :{{ model }}</p>
+        
+        <p>brand :{{ brand }}</p>
+
+        <p>top_speed :{{ top_speed }}</p>
+
+        <p>average_consumption :{{ average_consumption }}</p>
+
+        <p>color :{{ color }}</p> 
+
+        <p>mileage :{{ mileage }}</p>
+        
+        <p>price_sell :{{ price_sell }}</p>
+        
+        <p>price_rent :{{ price_rent }}</p>
+
+        {%if owner_email is not none %}
+        owner :<p>{{owner_email}}</p>
+        {%endif%}
+        {%if rent_owner_email is not none%}
+        renter :<p>{{rent_owner_email}}</p>
+        {%endif%}
+        <form action="/cars/delete" method="post">
+
+            <div class="form-group">
+               <input type="hidden" class="form-control" id="id"
+                      name="id" value={{id}} />
+            </div>
+            <button class="btn-delete" type="submit">delete car</button>  
+        </form>
+        
 
     </div>
 {% endmacro %}

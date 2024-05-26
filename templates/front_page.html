@@ -8,6 +8,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../static/style.css">
+
 </head>
 <body>
     <header class="header">
@@ -15,9 +16,10 @@
             <img src="../static/logo.png" alt="Logo">
         </a>
         <nav class="nav-menu">
-            <a href="#">Tous les modèles</a>
-            <a href="#">Électromobilité</a>
-            <a href="#">Conseils & achat</a>
+            <a href="/cars/search">Tous les modèles</a>
+            {%if user is not none%}
+            <a href="/cars/me">ma page</a>
+            {%endif%}
             <a href="#">Services & accessoires</a>
             <a href="#">Auto World</a>
         </nav>
@@ -55,26 +57,73 @@
     <section id="auth-section">
         <div class="auth-container">
             <div id="register-form" class="auth-form">
-                <h2>Register Now</h2>
-                <input type="text" placeholder="Enter your name">
-                <input type="email" placeholder="Enter your email">
-                <input type="password" placeholder="Enter your password">
-                <input type="password" placeholder="Confirm your password">
-                <label for="state">State:</label>
-                <select id="state">
-                     <option value="user">User</option>
-                     <option value="admin">Admin</option>
-                </select>       
-                <button onclick="register()">Register Now</button>
+                <form action="/users/sign_up" method="post">
+
+                    <div class="form-group">
+                       <label for="username">username</label>
+                       <input type="text" class="form-control" id="username"
+                              name="username" placeholder="" required />
+                    </div>
+                    <div class="form-group">
+                       <label for="email">email</label>
+                       <input type="textarea" class="form-control" id="email"
+                              name="email" required/>
+                    </div>
+                    <div class="form-group">
+                       <label for="password">password</label>
+                       <input type="textarea" class="form-control" id="password"
+                              name="password" required/>
+                    </div>
+                    <div class="form-group">
+                       <label for="password2">confirm pasword</label>
+                       <input type="textarea" class="form-control" id="password2"
+                              name="password2" required/>
+                        
+                    </div>
+
+                    <div class="form-check">
+                        <label class="form-check-label" for="seller" >est-ce un compte vendeur ?    
+                        <input type="checkbox" class="form-check-input" name="seller" id="seller"> </label>
+                            
+                    </div>
+                       <button type="submit" class="btn btn-success btn-delete">sign up</button>
+                </form>
                 <p>Already have an account? <a href="#" onclick="showLoginForm()">Login now</a></p>
             </div>
+            {%if user is none%}
             <div id="login-form" class="auth-form">
-                <h2>Login Now</h2>
-                <input type="email" placeholder="Enter your email">
-                <input type="password" placeholder="Enter your password">
-                <button onclick="login()">Login Now</button>
+                <form action="/users/login" method="post">
+                    <div class="form-group">
+                        <label for="email">email</label>
+                        <input type="textarea" class="form-control" id="email"
+                               name="email" required /> </div>
+                    
+                    <div class="form-group">
+                        <label for="password">pasword</label>
+                        <input type="textarea" class="form-control" id="password"
+                               name="password" required />
+                    
+                    
+                            </div>
+                    
+                            <button type="submit" class="btn btn-success btn-delete">login</button>
+                        </form>
                 <p>Don't have an account? <a href="#" onclick="showRegisterForm()">Register now</a></p>
             </div>
+            {%endif%}
+            {% if user is not none %}
+            <h2>Utilisateur connecté : {{ user.username }}</h2>
+            <div>
+                <div id="login-form" class="auth-form">
+                    <form action="/users/logout" method="post">
+                        <button type="submit" class="btn btn-success btn-delete"> log_out</button>
+                    </form>
+                </div>
+            </div>
+            <div>
+            {%endif%}
+</div>
+<div>
         </div>
     </section>
 

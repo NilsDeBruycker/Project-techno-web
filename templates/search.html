@@ -1,21 +1,69 @@
-{%block content%}
-<div>
-    <form action="/cars/search" method="post">
-        <div class="row">
-            <div class="form-group">
-                <label for="search">id</label>
-                <input type="text" class="form-search" id="search_therm"
-                    name="search_therm" placeholder="search" />
 
+{% from "my_macro.html" import show_cars %}
+{%block content%}
+<link rel="stylesheet" href="../static/search.css">
+<div class="search-bar">
+    <form action="/cars/search" method="post">
+            <div class="form-group">
+                <input type="textarea" class="form-search" id="search_therm"
+                    name="search_therm" placeholder="{{search_therm}}" />
+                <button type="submit" style="z-index: 1;" class="buton_search"> <img src="../static/search-icon.png" ></img></button>    
             </div>
-            <buton type="submit" class="buton_search"></buton>
+        
+            
+
+    </form>
+</div>
+    <div class="car_card_container" id="cars_zone">
+        <div class="car_card">
+            <form action="/cars/search" method="post">
+                <div class="form_group_search">
+                    <div class="column">
+                        <input type="hidden" class="form-search" id="search_therm"
+                            name="search_therm" value="{{search_therm}}" />
+                    </div>
+                </div>
+                <div class="form_group_search">consomation au 100 max
+                    <div class="column">
+                        <input type="text" class="form-search" id="max_consomation"
+                            name="max_consomation" placeholder=20 />
+                    </div>
+                </div>
+                <div class="form_group_search">kilometrage max
+                    <div class="column">
+                        <input type="text" class="form-search" id="max_lineage"
+                            name="max_lineage" placeholder=1000000000 />
+                    </div>
+                </div>
+                <div class="form_group_search">prix de vente max
+                    <div class="column">
+                        <input type="text" class="form-search" id="max_price_sell"
+                            name="max_price_sell" placeholder=1000000000 />
+                    </div>
+                </div>
+                <div class="form_group_search"> prix de location max
+                    <div class="column">
+                        <input type="text" class="form-search" id="max_price_rent"
+                            name="max_price_rent" placeholder=1000000000 />
+                               
+                    </div>
+                    <button type="submit" class="btn-create" style="color: rgb(255, 255, 255); background-color: green;  width: 86%;height:4%;">search</button> 
+                </div>
+                
+            </form>
 
         </div>
-    </form>
-    <div class="container p-4" id="cars_zone"></div>
+        {% set ns = namespace(i = 0) %}
+        {% for car in cars %}
+            {{ show_cars(car.id, car.model,car.make, car.max_speed,car.average_consumption,car.color,car.mileage,car.price_sell,car.price_rent,car.sell,car.rent,none,none) }}
+            {% set ns.i = ns.i + 1 %}
+        {% endfor %}
+        number of cars {{ns.i}}
+        <a class="btn btn-outline-dark mx-2" href="/cars/" style="color: white;">Retour</a>
+    </div>
+    
 
-<script>"../tri.javascript"</script>
+{%endblock%}
 
 
 
-</div>

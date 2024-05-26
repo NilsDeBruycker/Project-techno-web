@@ -31,10 +31,18 @@ def get_user_by_email(email: str):
                 password=user.password,
                 role=user.role,
                 blocked=user.blocked,
-                seller=user.seller
+                seller=user.seller,
+                monney=user.monney
             )
     return None
 
+def change_monney(current_user : User,new_monney : int):
+    with Session() as session:
+        statement = select(User).filter(User.email == current_user.email)
+        user = session.scalars(statement).one()
+        user.monney = new_monney
+        session.commit()
+    
 
 def sign_up_user(new_user: UserSchema):
     with Session() as session:

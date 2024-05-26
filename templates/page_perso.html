@@ -1,0 +1,91 @@
+{%extends "empty_page.html"%}
+{% from "my_macro.html" import show_cars_pers %}
+{% from "my_macro.html" import show_cars_pers_v %}
+{%block content%}
+<link rel="stylesheet" href="../static/search.css">
+{%if user.seller==true%}
+<div class="car_card_container" id="card-container">
+    {% set ns = namespace(i = 0) %}
+    {% for car in cars %}
+    {{ show_cars_pers_v(car.id, car.model,car.make, car.max_speed,car.average_consumption,car.color,car.mileage,car.price_sell,car.price_rent,false,false,car.owner_email,car.rent_owner_email) }}
+        {% set ns.i = ns.i + 1 %}
+    {% endfor %}
+    number of cars {{ns.i}}
+</div>
+{%endif%}
+{%if user.seller==false%}
+<div class="car_card_container" id="card-container">
+    {% set ns = namespace(i = 0) %}
+    {% for car in cars %}
+    {{ show_cars_pers(car.id, car.model,car.make, car.max_speed,car.average_consumption,car.color,car.mileage,car.price_sell,car.price_rent,false,false,car.owner_email,car.rent_owner_email) }}
+        {% set ns.i = ns.i + 1 %}
+    {% endfor %}
+    number of cars {{ns.i}}
+</div>
+{%endif%}
+
+<div class="car_card_container" id="card-container">
+    {% set na = namespace(i = 0) %}
+    {% for car in rented_cars %}
+    {{ show_cars_pers(car.id, car.model,car.make, car.max_speed,car.average_consumption,car.color,car.mileage,car.price_sell,car.price_rent,false,false,car.owner_email,car.rent_owner_email) }}
+        {% set na.i = na.i + 1 %}
+    {% endfor %}
+    number of rented cars {{na.i}}
+</div>
+
+<div>
+    <form action="/users/modify" method="post">
+        
+    <div class="form-group">
+        <label for="name">nouveau nom utilisateur</label>
+        <input type="text" class="form-control" id="new_username"
+            name="new_username" placeholder="" />
+            <button type="submit" class="btn btn-success btn-delete"> change username</button>
+        </form>
+    </div>
+    <form action="/users/new_password" method="post">
+        
+        <div class="form-group">
+            <label for="name">nouveau mot de passe</label>
+            <input type="text" class="form-control" id="password"
+                name="password" placeholder="" />
+                
+                
+        </div>
+        
+        <div class="form-group">
+            <label for="name">nouveau mot de passe</label>
+            <input type="text" class="form-control" id="password2"
+                name="password2" placeholder="" />
+                <button type="submit" class="btn btn-success btn-delete"> change pasword</button>
+        </div>
+    </form>
+    {%if user.seller==true%}   
+    <a class="btn btn-outline-dark mx-2" style="color: white;" href="/cars/modify">modifier voiture</a>
+    <a class="btn btn-outline-dark mx-2" style="color: white;" href="/cars/new">nouvelle voiture</a>
+    <a class="btn btn-outline-dark mx-2" href="/cars/" style="color: white;">Retour</a>
+    {%endif%}
+    {%if user.seller==false%} 
+    <div class="col">
+        <form action="/cars/unrent" method="post">
+            <div class="form-group">
+                <input type="text" class="form-control" id="car to give back" name="id" placeholder="Entrez l'id du de la voiture a rendre" />
+            </div>
+        </form>
+        <div class="col">
+            <a class="btn btn-outline-dark mx-2" href="/cars/" style="color: white;">Retour</a>
+        </div>
+        <a class="btn btn-outline-dark mx-2" href="/cars/search" style="color: white;">catalogue</a>
+    {%endif%}
+        <div class="col">
+           <h6>mon argent {{user.monney}} </h6>
+            <form action="/users/change_monney" method="post">
+                <div class="form-group">
+                    <input type="text" class="form-control" id="monney_change" name="monney_change" placeholder="montant avec lequell renflouer le compte" />
+                    <input type="hidden" class="form-control" id="id" name="id" value="{{user.id}}" />
+                    <button type="submit" class="btn btn-success btn-delete">renflouer le compte</button>
+                </div>
+            </form>
+    </div> 
+</div>
+{%endblock%}

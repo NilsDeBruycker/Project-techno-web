@@ -1,0 +1,47 @@
+.car_card_container {
+    background-color: black;
+    display: flex;
+    flex-wrap: wrap;
+    max-width: 99%;
+} 
+.car_card {
+    background-color: rgb(203, 203, 40);
+    color:black;
+    padding: 20px;
+    margin: 20px 10px;
+    border: 1px solid blue;
+    flex-basis: 25%;
+}
+.card-image{
+    max-width: 5cm;
+    width: 5cm;
+    height: auto;
+}
+.search-bar{
+    margin-left: 45%;
+    position: center;
+    max-width: 99%;
+}
+.form_group_search{
+    color:black;
+    background-color: #ffffff;
+}
+.btn-create {
+    border: 1px solid #000000; /* Bleu pastel */
+    background-color: #000000; /* Bleu clair */
+    color:white;
+}
+
+/* Styles pour le bouton "Modifier un livre" */
+.btn-modify {
+    border: 2px solid #d7c820; /* Rose pastel clair */
+    background-color: #d7c820; /* Rose clair */
+    color:rgb(249, 249, 252);
+}
+
+/* Styles pour le bouton "Supprimer" */
+.btn-delete {
+    border: 2px solid #c00013; /* Rouge pastel */
+    background-color: #c00013; /* Rouge clair */
+    color:#ffffff
+}

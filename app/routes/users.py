@@ -68,11 +68,20 @@ def sign_up_route(username: Annotated[str, Form()],email:Annotated[str, Form()],
             detail="confirmation password is not the same password"
         )
 
+@router.post('/change_monney')
+def change_user_monney(monney_change: Annotated[float,Form()],user: UserSchema= Depends(login_manager)):
+    if user.monney+monney_change<0:
+        return HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail= "would put balance into the negative"
+        )
+    user_service.change_monney(user,monney_change)
+    return RedirectResponse(url="/cars/me", status_code=302)
 
 
 @router.post('/logout')
 def logout_route():
-    response = RedirectResponse(url="/books/", status_code=302)
+    response = RedirectResponse(url="/cars/", status_code=302)
     response.delete_cookie(
         key=login_manager.cookie_name,
         httponly=True
@@ -87,7 +96,7 @@ def go_to_block_page(email:Annotated[str, Form()],user: UserSchema = Depends(log
             detail="user doesn't exist")
     
     user_service.block_user(email)
-    return RedirectResponse(url="/users/", status_code=302)
+    return RedirectResponse(url="/cars/me", status_code=302)
 
 @router.post("/unblock")
 def go_to_block_page(email:Annotated[str, Form()],user: UserSchema = Depends(login_manager),):
@@ -155,7 +164,7 @@ def go_to_profile(request:Request,user: UserSchema = Depends(login_manager)):
 @router.post("/modify")
 def modify_profile(new_username:Annotated[str, Form()], current_user: UserSchema = Depends(login_manager)):
     user_service.modify_user(new_username,current_user)
-    return RedirectResponse(url="/users/profile", status_code=302)
+    return RedirectResponse(url="/cars/me", status_code=302)
 
 """@router.get("/monney")
 def modify_monney(new_username:Annotated[str, Form()], current_user: UserSchema = Depends(login_manager)):
@@ -165,7 +174,7 @@ def modify_monney(new_username:Annotated[str, Form()], current_user: UserSchema 
 def redo_password(password: Annotated[str, Form()],password2: Annotated[str, Form()],user: UserSchema = Depends(login_manager)):
     if password==password2:
         user_service.change_password(user.email ,hashlib.sha3_256(password.encode()).hexdigest())
-    return RedirectResponse(url="/users/profile", status_code=302)
+    return RedirectResponse(url="/cars/me", status_code=302)
 
 @router.post("/delete")
 def delete_user(email: Annotated[str, Form()],user: UserSchema = Depends(login_manager)):

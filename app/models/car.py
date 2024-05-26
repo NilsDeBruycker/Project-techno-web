@@ -52,7 +52,10 @@ class User(Base):
     blocked     : Mapped[Boolean]=mapped_column(Boolean)
     role        : Mapped[str] = mapped_column(String(7))
     seller      : Mapped[Boolean]= mapped_column(Boolean)
-    monney      : Mapped[Float] = mapped_column
+    monney      : Mapped[Float] = mapped_column(Float)
+    __table_args__ = (
+            CheckConstraint('monney >= 0', name='check_positive_balance'),
+        )
 
 
 """class Client(Base):
@@ -72,7 +75,7 @@ class Vendor(Base):
 
 class Vehicle(Base):
     __tablename__ = 'vehicles'
-    id :Mapped[String] = mapped_column(Integer, primary_key=True)
+    id :Mapped[String] = mapped_column(String, primary_key=True)
     model :Mapped[String] = mapped_column(String)
     make :Mapped[String] = mapped_column(String)
     color :Mapped[String] = mapped_column(String)
@@ -88,4 +91,9 @@ class Vehicle(Base):
     #utilisateurs = relationship("Utilisateur", secondary=association_table, back_populates="vehicles")
     owner_email: Mapped[String] = mapped_column(ForeignKey("users.email"))
     rent_owner_email:Mapped[String]=mapped_column(ForeignKey("users.email"),nullable=True)
+    __table_args__ = (
+            CheckConstraint('price_sell >= 0', name='check_positive_price_sell'),
+            CheckConstraint('price_rent >= 0', name='check_positive_price_rent'),
+        )
+    
 

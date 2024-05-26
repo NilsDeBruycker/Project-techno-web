@@ -6,6 +6,7 @@ from app.database import Session
 from app.models.car import Vehicle
 from app.schemas.cars import Car as CarSchema
 from app.schemas.cars import Rental as RentalSchema
+from app.schemas.UserSchema import UserSchema
 
 # Function to save a new rental
 """def save_rental(new_rental: RentalSchema):
@@ -27,9 +28,10 @@ from app.schemas.cars import Rental as RentalSchema
         car.sell=True"""
 # Function to save a new car
 def save_car(new_car: CarSchema):
+    
     with Session() as session:
         new_car_entity = Vehicle(
-            id=uuid4(),
+            id=new_car.id,
             make=new_car.brand,
             model=new_car.model,
             price_sell=new_car.price_sell,
@@ -40,6 +42,8 @@ def save_car(new_car: CarSchema):
             max_speed=new_car.max_speed,
             color=new_car.color,
             mileage=new_car.mileage,
+            average_consumption=new_car.average_consumption
+
         )
         session.add(new_car_entity)
         session.commit()
@@ -64,7 +68,7 @@ def save_car(new_car: CarSchema):
     ]
 """
 # Function to get all cars owned by a user
-def get_own_cars(user):
+def get_own_cars(user:UserSchema):
     with Session() as session:
         statement = select(Vehicle).filter(Vehicle.owner_email == user.email)
         cars_data = session.scalars(statement).unique().all()
@@ -81,8 +85,9 @@ def get_own_cars(user):
             mileage=car.mileage,
             average_consumption=car.average_consumption,
             color=car.color,
-            sell=(car.price_sell!=0),
-            rent=(car.price_rent!=0)
+            sell=car.sell,
+            rent=car.rent,
+            rent_owner_email=car.rent_owner_email
         )
         for car in cars_data
     ]
@@ -105,8 +110,9 @@ def get_all_cars() -> list[Vehicle]:
             mileage=car.mileage,
             average_consumption=car.average_consumption,
             color=car.color,
-            sell=(car.price_sell!=0),
-            rent=(car.price_rent!=0)
+            sell=car.sell,
+            rent=car.rent,
+            rent_owner_email=car.rent_owner_email
             )
         for car in cars_data
     ]
@@ -144,8 +150,9 @@ def get_car_by_id(car_id):
                 mileage=car.mileage,
                 average_consumption=car.average_consumption,
                 color=car.color,
-                sell=(car.price_sell!=0),
-                rent=(car.price_rent!=0)
+                sell=car.sell,
+                rent=car.rent,
+                rent_owner_email=car.rent_owner_email
             )
 
 # Function to modify a car by its ID not needed ferai si temp
@@ -168,7 +175,7 @@ def modify_car_by_id(car_id: str, modified_car :dict,transaction : bool=False) -
             car.sell = modified_car["sell"]
             car.rent = modified_car["rent"]
             if transaction:
-                car.rent_owner_email=modified_car["old owner email"]
+                car.rent_owner_email=modified_car["rent_owner_email"]
             session.commit()
             return car
         return None
@@ -211,16 +218,20 @@ def modify_car_by_id(car_id: str, modified_car :dict,transaction : bool=False) -
         return False"""
 
 # Function to get all cars rented by a user
-def get_rented_cars(user_email: str):
+def get_rented_cars(user: UserSchema):
     with Session() as session:
-        statement = select(Vehicle).filter(Vehicle.rent_owner_email == user_email)
-        cars_data = session.scalars(statement).all()
+        if user.seller==False:
+            statement = select(Vehicle).filter(Vehicle.rent_owner_email == user.email)
+            cars_data = session.scalars(statement).all()
+        else:
+            statement = select(Vehicle).filter(Vehicle.owner_email == user.email,Vehicle.rent_owner_email!=user.email)
+            cars_data = session.scalars(statement).all()
     return [
         Vehicle(
             id=car.id,
             make=car.make,
             model=car.model,
-            price_vente=car.price_sell,
+            price_sell=car.price_sell,
             price_rent=car.price_rent,
 
             owner_email=car.owner_email,
@@ -229,12 +240,13 @@ def get_rented_cars(user_email: str):
             average_consumption=car.average_consumption,
             color=car.color,
             sell=car.sell ,
-            rent=car.rent
+            rent=car.rent,
+            rent_owner_email=car.rent_owner_email
         )
         for car in cars_data
     ]
 #Function search of 
-def search(search_therm: str):
+def search(search_therm: str,price_sell_max: int=1000000000,price_rent_max: int=1000000000,mileage :int=1000000000, vitesse_max : int=1000000000,conso_max=200):
     with Session() as session:
         statement=select(Vehicle)
         cars = session.scalars(statement).all()
@@ -244,7 +256,7 @@ def search(search_therm: str):
                 if((car.make==search_therm or
                     search_therm==car.model or
                     search_therm==car.color)
-                    and not( car.rent or car.sell)):
+                    and ( car.rent or car.sell) and(car.price_rent<price_rent_max and car.price_sell<price_sell_max and car.max_speed<vitesse_max and  car.mileage<mileage and car.average_consumption<conso_max)):
 
                     
                 
@@ -253,16 +265,19 @@ def search(search_therm: str):
                         make=car.make,
                         model=car.model,
                         #price=car.price,
+                        price_sell= car.price_sell,
+                        price_rent=car.price_rent,
                         owner_email=car.owner_email,
                         max_speed=car.max_speed,
                         mileage=car.mileage,
                         average_consumption=car.average_consumption,
                         color=car.color,
-                        sell=(car.price_sell!=0),
-                        rent=(car.price_rent!=0)
+                        sell=car.sell,
+                        rent=car.rent,
+                        rent_owner_email=car.rent_owner_email
                         ))
             else:
-                if(( car.sell or car.rent)):                                            
+                if(( car.sell or car.rent)and(car.price_rent<price_rent_max and car.price_sell<price_sell_max and car.max_speed<vitesse_max and  car.mileage<mileage and car.average_consumption<conso_max)):                                            
                     selected_cars.append(Vehicle(
                         id=car.id,
                         make=car.make,
@@ -274,8 +289,9 @@ def search(search_therm: str):
                         mileage=car.mileage,
                         average_consumption=car.average_consumption,
                         color=car.color,
-                        sell=(car.price_sell!=0),
-                        rent=(car.price_rent!=0)
+                        sell=car.sell,
+                        rent=car.rent,
+                        rent_owner_email=car.rent_owner_email
                         ))
         return selected_cars
     
